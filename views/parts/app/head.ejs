@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageName %></title>
+    <!-- Css/Scripts etc -->
+    <link rel="stylesheet" href="/css/root.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <link rel="shortcut icon" href="/media/root/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+    <!-- UIcons -->
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js" integrity="sha512-2RDFHqfLZW8IhPRvQYmK9bTLfj/hddxGXQAred2wNZGkrKQkLGj8RCkXfRJPHlDerdHHIzTFaahq4s/P4V6Qig==" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/themes@4.0.5/default/default.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="/css/swal.css">
+    <script src="/js/popup.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/buttons.css">
+    <link rel="stylesheet" href="/css/flex.css">
+    <link rel="stylesheet" href="/css/app/sidebar.css">
+    <link rel="stylesheet" href="/css/app/main.css">
+    <link rel="stylesheet" href="/css/snackbar.css">
+    <link rel="stylesheet" href="/css/app/memberBar.css">
+    <script>
+        function _imgError(elId){
+            const errorElement = document.getElementById(elId);
+            if(errorElement){
+                console.log(`[IMG-ERR | HANDLED](${elId})`);
+                errorElement.src = '//voltra.xyz/media/user/1618256387298Z5Ygx6bwrunknown.png'
+            } else {
+                console.warn(`[IMG-ERR | FAILED](${elId})`);
+            }
+        }
+        function gotoPage(endpoint){
+            window.location.href = endpoint;
+        }
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+    <% if(user){ %>
+        <script>
+            function getUserSID() {
+                console.warn('Do never copy any of the code of this website! It contains a generated SID that can grant access to your account!');
+                return "<%= user.sid %>";
+                }
+    
+                function getUserId() {
+                return "<%= user.id %>"
+                }
+                function getUserName() {
+                    return "<%= user.username %>";
+                }
+    
+                function getWSConn() {
+                let WS_connectionString = window.location.hostname;
+    
+                if (WS_connectionString == 'localhost') {
+                    console.log('Development host...');
+                    WS_connectionString = window.location.hostname + ':' + window.location.port;
+                }
+    
+                console.log('Connection str passed.', WS_connectionString)
+                return WS_connectionString;
+                }
+        </script>
+    
+        <script src="/js/socket/main.js"></script>
+        <% } %>
+</head>
+<body class="flex" id="body-content">
+    <%- include('sidebar.ejs') %>
+
+    <div class="flex-1">
+        <nav class="flex-init p-3">
+            <strong class="company-color" style="font-size: 20px;">
+                <%= pageName %>           
+            </strong>
+            <div class="menu flex-end">
+                <div class="item" onclick="gotoPage('/@me/friends/requests')">
+                    Friend Requests
+                </div>
+                <div class="item" onclick="gotoPage('/@me/settings')">
+                    Settings
+                </div>
+            </div>
+        </nav>

@@ -1,0 +1,50 @@
+<%- include('../parts/home/head.ejs') %> 
+
+    <div class="container">
+        <div class="text-center title">
+            <h1 class="text-main" style="margin-top: 100px;">
+                Welcome to <span class="company-color">Cura</span>!
+            </h1>
+            <h3 class="subtitle">
+                An easy to use chat service to connect to friends or family!
+            </h3>
+            <div class="buttons">
+                <a href="/login" class="btn btn-primary">Get Started</a>
+                <a href="#features" class="btn btn-primary purple">Features</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-2" style="margin-top: 100px;">
+        <div class="container">
+            <div class="title">
+                <h2 class="text-uppercase text-main">
+                    Features
+                </h2>
+                <div class="subtitle">
+                    <h3>
+                        What does <span class="company-color">Cura</span> offer?
+                    </h3>
+                </div>
+                <hr>
+            </div>
+            <div class="content">
+                <p><span class="company-color">Cura</span> offers a way to communicate to friends and to connect to other people!</p>
+                <p>Create your own guild to get to know more people!</p>
+                <p>Mobile support coming soon!</p>
+            </div>
+        </div>
+    </div>
+    <script>
+
+const qStr = window.location.search;
+    const qParams = new URLSearchParams(qStr);
+
+    if (qParams.has('e')) {
+        const err = qParams.get('e');
+         if(err == "ref"){
+            window.location.href = '/';
+        }
+    }
+    </script>
+<%- include('../parts/home/footer.ejs') %> 

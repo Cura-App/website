@@ -1,0 +1,63 @@
+<%- include('../parts/app/head.ejs') %> 
+
+    <div class="h-full" id="app">
+        <div class="flex-init">
+            <div class="channels">
+                <h5 class="text-uppercase company-color">
+                    Add Friend
+                </h5>
+                <hr>
+                <div id="form">
+                    <div id="err">
+
+                    </div>
+                    <label for="friendid">Friend ID</label>
+                    <br>
+                    <input class="form-control" type="text" id="friendid" name="friendid" placeholder="Abcdefg1234" required> 
+                    <button onclick="sendRequest()" id="sendreq" class="btn btn-primary purple mt-2">
+                        Send Friend Request!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const sendRequest = () => {
+        const txt = document.getElementById("friendid");
+        const btn = document.getElementById("sendreq");
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner-grow text-light" role="status">   
+        </div>`
+        txt.disabled = true;
+
+        const err = document.getElementById("err");
+
+        const error = (msg) => {
+            err.innerHTML = `<div class="alert alert-danger" role="alert">
+                                ${msg}
+                            </div>`
+            btn.disabled = false;
+            txt.disabled = false;
+            btn.innerText = `Send Friend Request!`
+        }
+
+        const val = txt.value;
+        if(!val) return error("Please provide a valid friend id!");
+
+        fetch(`/@/api/friend-status/request?id=${val}`, {
+            method: "post",
+            headers: {
+                "sid": "<%= user.sid %>"
+            }
+        }).then(res=>res.json())
+            .then(data => {
+                console.log(data);
+                if(data.code !== 200) return error(data.msg);
+
+                window.location.href = '/@me'
+            });
+    }
+</script>
+
+<%- include('../parts/app/footer.ejs') %> 

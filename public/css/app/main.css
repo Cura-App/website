@@ -1,0 +1,104 @@
+nav {
+    background-color: var(--d-bg-dark);
+    margin-left: 70px;
+}
+
+#app {
+    margin-left: 75px;
+}
+
+.menu .item {
+    padding-right: 5px;
+    cursor: pointer;
+}
+.menu .item:last-child {
+    padding-left: 5px;
+}
+
+#thread>.instance {
+    padding: 5px;
+    margin-bottom: 5px;
+    max-width: 80%;
+    overflow-wrap: break-word;
+}
+
+#thread>.instance:not(:last-child){
+    border-bottom: 1px solid var(--d-grey-transparent);
+}
+
+.menu>.item:not(:last-child) {
+    border-right: 1px solid hsla(0, 0%, 100%, .2);
+}
+
+.channels {
+    margin-top: 10px;
+    margin-left: 10px;
+    min-width: 90%;
+    max-width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.channels .channel {
+    display: inline-block;
+    padding-bottom: 10px;
+    cursor: pointer;
+    color: var(--d-cyan);
+    padding: 3px 10px;
+    font-weight: 600;
+}
+.channel .btn {
+    padding: 0 5px !important;
+}
+.channels .channel:hover, .channels .channel:active {
+    display: inline-block;
+    background-color: var(--d-bg-secondary);
+    border-radius: 5px;
+}
+
+.channels .channel:last-child {
+    padding-top: 5px;
+}
+
+.messages {
+    margin: 10px;
+    margin-left: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.messages #thread {
+    width: 91.7vw;
+    max-height: 75vh;
+    overflow-y: scroll;
+}
+
+.messages input {
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    bottom: 45px;
+    width: 70%;
+}
+.messages .typingdialog {
+    background-color: var(--d-bg-secondary);
+    border-radius: 5px 5px 0px 0px;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    bottom: 85px;
+    width: 70%;
+    padding-left:10px;
+    padding-bottom:2px;
+    visibility: hidden;
+}
+
+#loading-screen {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 10rem; 
+    height: 10rem;
+}

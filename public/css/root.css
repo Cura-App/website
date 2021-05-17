@@ -1,0 +1,13 @@
+:root {
+    --d-bg: #1d2331;
+    --d-bg-dark: #161b25;
+    --d-bg-secondary: #19273b;
+    --d-grey: #2f394c;
+    --d-grey-transparent: #2f394c;
+    --d-white: white;
+    --d-purple: #5e72e4;
+    --d-cyan: #2f79d0;
+    --d-cyan-light: #3191ff;
+    --d-color-main: #CBD5E0;
+    scroll-behavior: smooth;
+}

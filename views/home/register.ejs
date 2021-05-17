@@ -1,0 +1,45 @@
+<%- include('../parts/home/head.ejs') %> 
+
+<div class="container">
+    <div class="text-center title">
+        <h1 class="text-main" style="margin-top: 100px;">
+            Register
+        </h1>
+        <h3 class="subtitle">
+            Create a new account!
+        </h3>
+        <form action="/register" method="POST" class="text-left">
+            <% if(emsg !== null){ %>
+                <div class="alert alert-danger" role="alert">
+                    <%- emsg %>
+                </div>
+            <% } %>
+            <div>
+                <br>
+                <label for="name">Username</label>
+                <br>
+                <input class="form-control" type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <br>
+                <label for="email">Email</label>
+                <br>
+                <input class="form-control" type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <br>
+                <label for="password">Password</label>
+                <br>
+                <input class="form-control" type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="mt-2 btn btn-outline-primary btn-block">Register</button>
+            <br>
+            By creating an account you agree to our <a href="/docs/tos">terms of service</a>.
+            <br>
+            <br>
+            <a href="/login">Already a member?</a>
+        </form>
+    </div>
+</div>
+
+<%- include('../parts/home/footer.ejs') %> 

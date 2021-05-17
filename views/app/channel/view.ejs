@@ -1,0 +1,33 @@
+<%- include('../../parts/app/head.ejs') %> 
+    <script>
+
+        const getThreadId = `<%= dm.id %>`;
+
+    </script>
+
+    <div class="h-full" id="app">
+        <div class="flex-init">
+            <div class="messages" id="message-container">
+                <div id="thread">
+                    <% if(dm.thread.length == 0){ %>
+                        <h3 class="text-main m-3">
+                            Be the first to send a message!
+                        </h3>
+                    <% } %>
+                    <% dm.thread.forEach(x => { %>
+                        <div class="instance">
+                            <span class="company-text">
+                                <a href="/@/<%= x.author.id %>"><%= x.author.username %></a>: <%- x.content %>
+                            </span>
+                        </div>
+                    <% }); %>
+                </div>
+                <div class="typingdialog" id="typing"></div>
+                <input class="form-control" type="text" id="messageText" onkeydown="messageArea('<%= dm.id %>', 'none')" onfocusout="stopTyping('<%= dm.id %>')" placeholder="Message...">
+            </div>
+            <div>
+            </div>
+        </div>
+    </div>
+
+<%- include('../../parts/app/footer.ejs') %> 

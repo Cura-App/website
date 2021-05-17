@@ -1,0 +1,43 @@
+<%- include('../parts/app/head.ejs') %> 
+
+    <div class="h-full" id="app">
+        <div class="flex-init">
+            <div class="channels">
+                <h5 class="text-uppercase company-color">
+                    Friends
+                    <a href="/@me/add" class="btn btn-primary purple" data-toggle="tooltip" title="Add Friend">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </h5>
+                <hr>
+                <div>
+                     <% friends.forEach(x => { %>
+                        <div onclick="gotoPage('/@/<%= x.id %>')" class="channel">
+                            <%= x.username %>
+                        </div>
+                        <br>
+                    <% }); %>
+                    <% if(friends.length == 0){ %>
+                        <h3 class="text-main">
+                            You have no friends to show!
+                        </h3>
+                    <% } %>
+                </div>
+                </div>
+        </div>
+    </div>
+    <script>
+        const qStr = window.location.search;
+        const qParams = new URLSearchParams(qStr);
+
+        if (qParams.has('e')) {
+            const err = qParams.get('e');
+            if(err == "g-ratelimit"){
+                Toast.fire({
+                    icon: "error",
+                    text: "You can't create another guild at this moment!"
+                });
+            }
+        }
+    </script>
+<%- include('../parts/app/footer.ejs') %> 

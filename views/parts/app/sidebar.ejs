@@ -1,0 +1,68 @@
+<div class="sidebar p-3 overflow-auto scroll bg-opacity-100 shadow-xl lg:shadow-none">
+    <br>
+    <a href="/@me" class="company-color home" data-toggle="tooltip" data-placement="right" title="Home">
+        H
+    </a>
+    <hr class="mt-4">
+    <div class="guild-list">
+        <% guilds.forEach(x => { %>
+            <img onclick="gotoPage('/g/<%= x.id %>')" src="/media/svg/server.svg" data-toggle="tooltip" data-placement="right" title="<%= x.name %>">
+        <% }); %>
+        <img src="/media/svg/plus.svg" onclick="createGuild()" data-toggle="tooltip" data-placement="right" title="New guild">
+    </div>
+</div>
+<script>
+    // Creating a guild
+    const createGuild = () => {
+        Swal.fire({
+            title: 'Create guild',
+            text: "Please input your guild name.",
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Create',
+            showLoaderOnConfirm: true,
+            preConfirm: (val) => {
+                let postData = {
+                    name: val
+                }
+
+                var formBody = [];
+                for (var property in postData) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(postData[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+
+                return fetch(`/g/api/new`, {
+                    method: "POST",
+                    headers: {
+                        "sid": "<%= user.sid %>",
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body: formBody
+                    
+                })
+                .then(data =>data.json()).then(response=> {
+                    if(response.code !== 200) {
+                        throw new Error(response.msg)
+                    }
+                    return response;
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(
+                        `Request failed: ${error}`
+                    )
+                })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/g/' + result.value.msg
+            }
+        })
+    }
+</script>

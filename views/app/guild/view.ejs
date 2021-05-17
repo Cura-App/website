@@ -1,0 +1,180 @@
+<%- include('../../parts/app/head.ejs') %> 
+
+    <script>
+        function getUser(id, nameEl){
+            fetch(`/@/api/${id}`, {
+                headers: {
+                    "sid": "<%= user.sid %>"
+                }
+            }).then(r=>r.json())
+            .then(d=> {
+                const nameSec = document.getElementById(nameEl);
+                console.log(d)
+
+                if(d.code !== 200) return nameSec.innerText = "Unkown"
+
+                nameSec.innerText = d.json.username;
+            });
+        }
+
+        function viewCard(id){
+            fetch(`/@/api/${id}`, {
+                headers: {
+                    "sid": "<%= user.sid %>"
+                }
+            }).then(r=>r.json())
+            .then(d=> {
+                console.log(d)
+
+                if(d.code !== 200) return Toast.fire({
+                    icon: "error",
+                    text: "Could not load this user card!"
+                });
+
+                let badges = ``
+
+                if(d.json.badges.mod) badges = badges + `<i class="fi-br-shield text-purple" data-toggle="tooltip"  title="Site Staff" data-placement="bottom"></i>`;
+                if(d.json.badges.bugFinder) badges = badges + `<i class="fi-br-bug company-color" data-toggle="tooltip"  title="Bug Finder" data-placement="bottom"></i>`;
+
+
+                Swal.fire({
+                    title: d.json.username,
+                    html: `
+                        <h3 class="text-center" id="card-badges-${id}">
+                            ${badges}
+                        </h3>
+                    `
+                })
+            });
+        }
+    </script>
+
+    <div class="h-full" id="app">
+
+        <div class="memberBar">
+            <div>
+                <% guild.users.forEach(x => { %>
+                    <a href="javascript:void(0)" onclick="viewCard('<%= x %>')">
+                        <% if(guild.owner == x){ %>
+                            <i class="fi-br-crown" style="color: var(--d-purple);"></i>
+                        <% } else { %>
+                            <i class="fi-br-user"></i>
+                        <% } %>
+                        <span id="username-mb-<%= x %>">
+
+                        </span>
+                        <script>
+                            getUser("<%= x %>", "username-mb-<%= x %>");
+                        </script>
+                    </a> 
+                <% }); %>
+            </div>
+        </div>
+
+        <div class="flex-init">
+            <div class="channels">
+                        <% if(canMod){ %>
+                            <div class="moderation">
+                                <h5 class="text-uppercase company-color">
+                                    Moderation
+                                </h5>
+                                <hr>
+        
+                                <button class="btn btn-primary purple" onclick="viewInvites()">
+                                    Invites
+                                </button>
+                                
+                                <script>
+        
+                                    const viewInvites = () => {
+                                        Swal.fire({
+                                            title: "Invites",
+                                            html: `
+                                            <div class="text-center">
+                                                <button class="btn btn-outline-primary" onclick="newInv()">New Invite</button>
+                                            </div>
+                                            <hr>
+                                            <div id="invites">
+                                                <% guild.invites.forEach(x => { %>
+                                                    <div onclick="gotoPage('/invite/<%= x %>')" class="channel">
+                                                        https://cura-app.tk/invite/<%= x %>
+                                                    </div>
+                                                    <br>
+                                                <% }); %>
+                                                <% if(guild.invites.length == 0){ %>
+                                                    <p>This guild has no invites!</p>
+                                                <% } %>
+                                            </div>
+                                            
+                                            `
+                                        })
+                                    }
+        
+                                    function newInv(){
+                                        fetch(`/g/api/new-invite?id=<%= guild.id %>`, {
+                                            method: "post",
+                                            headers: {
+                                                "sid": "<%= user.sid %>"
+                                            }
+                                        }).then(r=>r.json())
+                                            .then(d => {
+                                                console.log(d);
+                                                if(d.code !== 200) return Toast.fire({
+                                                    icon: "error",
+                                                    text: d.msg
+                                                });
+        
+                                                return window.location.reload();
+                                            })
+                                    }
+                                </script>
+        
+                                <hr>
+                            </div>
+                        <% } %>
+                        <h5 class="text-uppercase company-color">
+                            Channels
+                            <% if(canMod){ %>
+                                <button onclick="newChannel()" class="btn btn-primary purple" data-toggle="tooltip" data-placement="right" title="Add Channel">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <script>
+                                    const newChannel = () => {
+                                        Swal.fire({
+                                            title: 'Create channel',
+                                            text: "Please input your channel name.",
+                                            input: 'text',
+                                            inputAttributes: {
+                                                autocapitalize: 'off'
+                                            },
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Create',
+                                            showLoaderOnConfirm: true,
+                                            preConfirm: (val) => {
+                                                socket.emit("create-channel", {
+                                                    sid: "<%= user.sid %>",
+                                                    id: "<%= guild.id %>",
+                                                    name: val
+                                                });
+                                            }
+                                        })
+                                    }
+                                </script>
+                            <% } %>
+                        </h5>
+                        <hr>
+                        <% channels.forEach(x => { %>
+                            <div onclick="gotoPage('/g/<%= guild.id %>/channel/<%= x.id %>')" class="channel">
+                                <%= x.name %>
+                            </div>
+                            <br>
+                        <% }); %>
+                        <% if(channels.length == 0){ %>
+                            <h3 class="text-main">
+                                This guild has no channels.
+                            </h3>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+    <%- include('../../parts/app/footer.ejs') %>

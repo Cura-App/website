@@ -1,0 +1,58 @@
+.memberBar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 4em;
+    left: 0;
+    right: 0;
+    padding: 0 5px;
+    text-align: center;
+    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-x: auto;
+    overflow-x: auto;
+    -webkit-overflow-y: hidden;
+    overflow-y: hidden;
+    z-index: 95;
+}
+.memberBar>div {
+    display: inline-block;
+    white-space: nowrap;
+    background-color: var(--d-bg-dark);
+    box-sizing: border-box;
+    padding: 0 5px;
+    border-radius: 25px;
+    line-height: 0em;
+}
+
+.memberBar>div>a {
+    display: inline-block;
+    white-space: nowrap;
+    border-radius: 25px;
+    background-color: transparent;
+    color: var(--d-cyan);
+    font-size: 1em;
+    font-weight: bold;
+    text-decoration: none;
+    overflow: hidden;
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    -webkit-transition: all .25s ease-in-out;
+    -moz-transition: all .25s ease-in-out;
+    -o-transition: all .25s ease-in-out;
+    transition: all .25s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.memberBar>div>a:hover {
+    background-color: var(--d-bg-secondary);
+}
+.memberBar>div>a>i, .memberBar>div>a>img {
+    width: 1em !important;
+    height: 1em !important;
+    object-fit: contain;
+    -webkit-margin-inline-end: 5px;
+    margin-inline-end: 5px;
+}

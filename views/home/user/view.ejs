@@ -1,0 +1,47 @@
+<%- include('../../parts/home/head.ejs') %> 
+
+    <div class="container">
+        <div class="text-center title">
+            <h1 class="text-main" style="margin-top: 100px;">
+                <%= friend.username %>
+            </h1>
+            <h3 class="badges">
+                <% if(friend.modBadge){ %>
+                    <i class="fi-br-shield text-purple" data-toggle="tooltip"  title="Site Staff" data-placement="bottom"></i>
+                <% } %>
+                <% if(friend.bugBuster){ %>
+                    <i class="fi-br-bug company-color" data-toggle="tooltip"  title="Bug Finder" data-placement="bottom"></i>
+                <% } %>
+            </h3>
+            <hr>
+            <div class="buttons">
+                <button class="btn btn-outline-primary rounded" onclick="startDM('<%= friend.id %>')"><i class="fi-br-comment"></i> Message</button>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>    <br>
+    <br>
+    <br>
+    <br>    <br>
+    <br>
+    <br>
+    <br>    <br>
+    <br>
+
+    <script>
+
+const qStr = window.location.search;
+    const qParams = new URLSearchParams(qStr);
+
+    if (qParams.has('e')) {
+        const err = qParams.get('e');
+         if(err == "ref"){
+            window.location.href = '/';
+        }
+    }
+    </script>
+<%- include('../../parts/home/footer.ejs') %> 

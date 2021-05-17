@@ -1,0 +1,98 @@
+/* 
+    Css for main pages
+*/
+
+body {
+    background-color: var(--d-bg);
+    color: var(--white);
+}
+footer {
+    margin-top: 50px;
+    background-color: var(--d-bg-secondary) !important;
+}
+
+hr {
+    border-top: 1px solid var(--d-grey-transparent);
+}
+
+.text-main {
+    color: var(--d-color-main);
+}
+
+.bg-2 {
+    background-color: var(--d-bg-secondary);
+}
+
+.text-purple {
+    color: var(--d-purple);
+}
+
+input:hover, input, input:focus {
+    background-color: var(--d-grey) !important;
+    border: none !important;
+    color: var(--d-white) !important;
+    box-shadow: 0 0 0 rgb(255 255 255);
+}
+.form-control:focus {
+    box-shadow: none;
+}
+label {
+    color: var(--d-color-main);
+}
+
+a {
+    color: var(--d-cyan);
+}
+.navbar-collapse a {
+    color: rgba(255,255,255,.5);
+}
+
+.navbar-brand {
+    color: var(--d-cyan) !important;
+}
+
+.company-color {
+    color: var(--d-cyan) !important;
+}
+
+.title .subtitle {
+    color: rgba(255,255,255,.5);
+}
+
+::-webkit-scrollbar {
+    background-color: transparent;
+    width: 10px;
+    margin-left: 10px!important;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: var(--d-grey);
+}
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgb(0 0 0 / 30%);
+    -webkit-box-shadow: inset 0 0 6px rgb(0 0 0 / 30%);
+    background-color: var(--d-bg);
+    border-radius: 10px;
+}
+.container {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Re-configure Swal2 */
+.swal2-popup {
+    background: var(--d-bg);
+}
+.swal2-title {
+    color: var(--d-color-main);
+}
+.swal2-html-container {
+    color: var(--white);
+}
+.swal2-validation-message {
+    background: var(--d-bg-secondary);
+}
+
+.card {
+    background-color: var(--d-bg-dark);
+}

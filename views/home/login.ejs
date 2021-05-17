@@ -1,0 +1,37 @@
+<%- include('../parts/home/head.ejs') %> 
+
+<div class="container">
+    <div class="text-center title">
+        <h1 class="text-main" style="margin-top: 100px;">
+            Login
+        </h1>
+        <h3 class="subtitle">
+            Get started on <span class="company-color">Cura</span>!
+        </h3>
+        <form action="/login" method="POST" class="text-left">
+            <% if(emsg.length > 0){ %>
+                <div class="alert alert-danger" role="alert">
+                    <%- emsg %>
+                </div>
+            <% } %>
+            <div>
+                <br>
+                <label for="email">Email</label>
+                <br>
+                <input class="form-control" type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <br>
+                <label for="password">Password</label>
+                <br>
+                <input class="form-control" type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="mt-2 btn btn-outline-primary btn-block">Login</button>
+            <br>
+            <br>
+            <a href="/register">Don't have an account?</a>
+        </form>
+    </div>
+</div>
+
+<%- include('../parts/home/footer.ejs') %> 

@@ -1,0 +1,33 @@
+.btn.btn-primary {
+    color: var(--d-white);
+    background-color: var(--d-cyan);
+    border-color: var(--d-cyan);
+}
+
+.btn.purple {
+    background-color: var(--d-purple);
+    border-color: var(--d-purple);
+}
+
+.btn.rounded {
+    border-radius: 25px !important;
+}
+
+.btn:hover {
+    filter: brightness(.9) !important;
+}
+
+/* Get rid of the focus effect */
+.btn:focus {
+    box-shadow: none !important;
+}
+.btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: var(--d-white);
+    background-color: var(--d-cyan);
+    border-color: var(--d-cyan);
+}
+.btn-primary.purple:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: var(--d-white);
+    background-color: var(--d-purple);
+    border-color: var(--d-purple);
+}

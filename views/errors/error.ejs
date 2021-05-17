@@ -1,0 +1,42 @@
+<%- include('../parts/home/head.ejs') %> 
+
+    <div class="container">
+        <div class="text-center title">
+            <h1 class="text-main" style="margin-top: 100px;">
+                Error
+            </h1>
+            <h3 class="subtitle">
+                <em>
+                    <%- msg %>
+                </em>
+            </h3>
+        </div>
+    </div>
+
+    <div class="bg-2" style="margin-top: 100px;">
+        <div class="container">
+            <div class="title">
+                <h2 class="text-uppercase text-main">
+                    Error
+                </h2>
+                <h3 class="subtitle">
+                    An error occured, this can be caused by:
+                </h3>
+                <hr>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>
+                        The page was removed.
+                    </li>
+                    <li>
+                        The page does not exist.
+                    </li>
+                    <li>
+                        The data was deleted/disabled/removed.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<%- include('../parts/home/footer.ejs') %> 

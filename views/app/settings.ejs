@@ -1,0 +1,24 @@
+<%- include('../parts/app/head.ejs') %> 
+
+    <div class="h-full" id="app">
+        <div class="flex-init">
+            <div class="card m-3">
+                <div class="card-body">
+                    <h5 class="text-uppercase company-color">
+                        Settings
+                    </h5>
+                    <hr>
+                    <div id="form">
+                        <div id="err">
+
+                        </div>
+                        <label for="friendid">Your Friend ID</label>
+                        <br>
+                        <input class="form-control disabled" disabled type="text" id="friendid" name="friendid" value="<%= user.friendId %>" required> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('../parts/app/footer.ejs') %> 
