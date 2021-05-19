@@ -335,7 +335,8 @@ function run(App){
             }
             
             return io.in(sendToRoom).emit("typing-start", {
-                username: user.username
+                username: user.username,
+                channel: did
             });
         });
         socket.on("typing-stop", async (data) => {

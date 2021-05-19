@@ -57,6 +57,12 @@ Array.prototype.remove = function() {
 socket.on("typing-start", (d) => {
     if (typing.includes(escapeHtml(d.username))) return;
     if (d.username === usern) return;
+    const channel = d.channel;
+
+    console.log(channel, getThreadId)
+
+    if(channel !== getThreadId) return;
+
     typing.push(d.username);
     typingUsers[escapeHtml(d.username)] = 5;
     refreshTypingText();
