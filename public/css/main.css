@@ -31,6 +31,10 @@ hr {
     color: var(--d-purple);
 }
 
+.text-red {
+    color: #dc3545;
+}
+
 input:hover, input, input:focus {
     background-color: var(--d-grey) !important;
     border: none !important;

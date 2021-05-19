@@ -127,8 +127,12 @@ function run(App){
                 sid: sid
             });
             if(!user) return fin(true, "Action Not Allowed");
-            if(user.disabled) return fin(true, "Action Not Allowed");
-            if(user.terminated) return fin(true, "Action Not Allowed");
+            if(user.disabled) return socket.emit("location", {
+               href: `/logout` 
+            });
+            if(user.terminated) return socket.emit("location", {
+               href: `/logout` 
+            });
             
             const dm = await dmModel.findOne({ 
                 id: dmId

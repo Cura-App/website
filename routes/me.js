@@ -13,6 +13,18 @@ const shortid = require('shortid');
 const fs = require('fs');
 const mv = require('mv');
 
+
+const usernameRateLimit = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 5,
+    handler: function (req, res) {
+        return res.status(429).send({
+            code: 429,
+            msg: "Please take it slow!"
+        });
+    }
+});
+
 router.get("/", checkAuth, async (req, res) => {
     const friends = await userModel.find({ friends: req.user.id });
 
@@ -36,6 +48,40 @@ router.get("/settings", checkAuth, async (req, res) => {
         guilds: guilds.reverse()
     })
 });
+
+router.post("/update/username", usernameRateLimit, async (req, res) => {
+    const sid = req.header("sid");
+    const username = req.body.username;
+
+    const f = (code, msg, json) => {
+        const endCode = code ? code : 501;
+        const endMsg = msg ? msg : "Not Implemented";
+        const endJson = json ? json : null;
+
+        return res.status(endCode).send({
+            code: endCode,
+            msg: endMsg,
+            json: endJson
+        });
+    }
+
+    if(!sid) return f(400, "Action Not Allowed");
+    if(!username) return f(400, "Please provide a new username!");
+
+    const user = await userModel.findOne({ sid: sid, disabled: false, terminated: false });
+    if(!user) return f(401, "Action Not Allowed");
+
+    if(username.length > 50) return f(400, "Username cannot be larger then 50 characters!");
+
+    await userModel.findOneAndUpdate({
+        sid: sid,
+        id: user.id
+    }, {
+        username: username
+    });
+
+    return f(200, "Username updated!");
+})
 
 router.get("/friends/requests", checkAuth, async (req, res) => {
     const user = req.user;

@@ -1,0 +1,2 @@
+- [ ] Add decline friendship
+- [ ] Add moderation for guilds

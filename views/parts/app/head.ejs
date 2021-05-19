@@ -54,6 +54,14 @@
         }
     </script>
     <% if(user){ %>
+        <% if(user.disabled || user.terminated){ %>
+            <script>
+              (() => {
+                console.error(`User status error! Login required!`);
+                window.location.href = `/logout`;
+              })()
+            </script>
+          <% } %>
         <script>
             function getUserSID() {
                 console.warn('Do never copy any of the code of this website! It contains a generated SID that can grant access to your account!');

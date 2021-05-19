@@ -16,9 +16,81 @@
                         <br>
                         <input class="form-control disabled" disabled type="text" id="friendid" name="friendid" value="<%= user.friendId %>" required> 
                     </div>
+
+                    <div id="form-username" class="mt-3">
+                        <div id="err-username">
+
+                        </div>
+                        <label for="username">Username</label>
+                        <br>
+                        <input class="form-control" type="text" id="username" name="username" value="<%= user.username %>" required> 
+                        <button class="btn btn-primary purple mt-2" id="submit-un-btn" onclick="saveUsername()">
+                            Save Username
+                        </button>
+                    </div>
+
+                    <h5 class="text-uppercase text-red mt-5">
+                        Danger Zone
+                    </h5>
+                    <hr>
+                    <div id="danger-zone">
+                        <button class="btn btn-outline-danger" onclick="gotoPage('/logout')">
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        function saveUsername(){
+            const val = document.getElementById("username");
+            const btn = document.getElementById("submit-un-btn");
+
+            val.disabled = true;
+            btn.disabled = true;
+
+            const value = val.value;
+
+            const err = (msg) => {
+                const ez = document.getElementById("err-username");
+
+                ez.innerHTML = `<p class="text-red">${msg}</p>`
+                val.disabled = false;
+                btn.disabled = false;
+            }
+
+            if(!value) return err("Please insert a username!");
+
+            let postData = {
+                username: value
+            }
+            let formBody = [];
+            for (var property in postData) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(postData[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+
+            fetch(`/@me/update/username`, {
+                method: "post",
+                headers: {
+                    "sid": "<%= user.sid %>",
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: formBody
+            }).then(r=>r.json())
+                .then(d=> {
+                    if(d.code !== 200) return err(d.msg);
+                    const ez = document.getElementById("err-username");
+
+                    ez.innerHTML = `<p class="text-purple">${d.msg}</p>`
+                    val.disabled = false;
+                    btn.disabled = false;
+                })
+        }
+    </script>
 
 <%- include('../parts/app/footer.ejs') %> 

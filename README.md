@@ -28,6 +28,7 @@ And enjoy!
 
 - [x] Chatting (Dms/Guilds)
 - [x] Friendships
+- [x] Profile editing
 - [x] Guilds (Basic)
 - [ ] Moderation
 - [x] Live notifications
