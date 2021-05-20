@@ -67,6 +67,8 @@ router.post("/api/new", newGuildRateLimit, async (req, res) => {
         id: id,
         name: name,
         users: [user.id],
+        admins: [user.id],
+        mods: [user.id],
         owner: user.id
     });
     await newGuild.save();

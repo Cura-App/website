@@ -6,6 +6,18 @@
                 <%= friend.username %>
             </h1>
             <h3 class="badges">
+                <% if(friend.bot){ %>
+                    <% if(friend.dev){ %>
+                        <span class="badge badge-primary">
+                            <img src="/media/svg/check-circle.svg" height="22" data-toggle="tooltip" title="Verified Bot"> Bot
+                        </span>
+                    <% } else { %>
+                        <span class="badge badge-primary purple">
+                            Bot
+                        </span>
+                    <% } %>
+                <% } %>
+
                 <% if(friend.modBadge){ %>
                     <i class="fi-br-shield text-purple" data-toggle="tooltip"  title="Site Staff" data-placement="bottom"></i>
                 <% } %>

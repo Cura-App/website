@@ -42,6 +42,8 @@ module.exports = async (req, res) => {
 
     switch(action){
         case "request":
+            if(target.bot) return fin(401, "You can't friend a bot!");
+
             if(pending.includes(target.id)) return fin(401, "Request already pending!");
             if(tpending.includes(user.id)) return fin(401, "Request already pending!");
 

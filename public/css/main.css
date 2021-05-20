@@ -23,6 +23,15 @@ hr {
     color: var(--d-color-main);
 }
 
+.text-blur {
+    filter: blur(10px);
+    transition: .25s;
+}
+
+.text-blur:hover {
+    filter: blur(0px);
+}
+
 .bg-2 {
     background-color: var(--d-bg-secondary);
 }

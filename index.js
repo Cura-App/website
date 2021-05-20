@@ -76,6 +76,12 @@ app.use('/@me', applicationRoute)
 const userRouter = require('./routes/user');
 app.use('/@', userRouter)
 
+const botapiRouter = require('./routes/bot-api');
+app.use('/bot/api', botapiRouter)
+
+const botRouter = require('./routes/bot');
+app.use('/bot', botRouter)
+
 const guildRouter = require('./routes/guild');
 app.use('/g', guildRouter)
 
@@ -121,6 +127,7 @@ app.get("/invite/:inv", checkAuth, async (req, res) => {
         return res.render('errors/error.ejs', { pageName: "Error", msg, user: req.user })
     }
 
+    if(user.bot) return e("You must be authorized to join this guild!")
     if(!invite) return e("No invite found!");
     const guild = await guildModel.findOne({ invites: invite, disabled: false });
 
@@ -179,6 +186,7 @@ app.post('/login', checkNotAuth, passport.authenticate('local', {
     failureFlash: true
 }));
 
+
 app.post('/register', checkNotAuth, async (req, res) => {
     try {
         const RandomId =  "-" + shortid.generate();
@@ -218,6 +226,7 @@ app.post('/register', checkNotAuth, async (req, res) => {
                 id: fullId, 
                 friendId: friendId,
                 username: field.name, 
+                bot: false,
                 email: field.email, 
                 sid: verifyCode,
                 password: hashedPassword,

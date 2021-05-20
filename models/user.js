@@ -38,6 +38,13 @@ const User = Schema({
         type: Boolean,
         default: false
     },
+    bot: {
+        type: Boolean,
+        default: false
+    },
+    owner: {
+        type: String
+    },
     bugBuster: {
         type: Boolean,
         default: false

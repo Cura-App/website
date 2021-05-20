@@ -1,0 +1,134 @@
+<%- include('../parts/home/head.ejs') %> 
+
+    <div class="container">
+        <div class="text-center title">
+            <h1 class="text-main" style="margin-top: 100px;">
+                <%= pageName %>
+            </h1>
+            <h3 class="subtitle">
+                <% if(bot.dev){ %>
+                    <span class="badge badge-primary">
+                        <img src="/media/svg/check-circle.svg" height="22" data-toggle="tooltip" title="Verified Bot"> Bot
+                    </span>
+                <% } else { %>
+                    <span class="badge badge-primary purple">
+                        Bot
+                    </span>
+                <% } %>
+            </h3>
+            <div class="buttons">
+                <a href="/@me/bots" class="btn btn-primary purple">Bots</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-2" style="margin-top: 100px;">
+        <div class="container">
+            <div class="title">
+                <h2 class="text-uppercase text-main">
+                    Settings
+                </h2>
+                <hr>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3 d-flex justify-content-center">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title text-main">
+                                    Username
+                                </h4>
+                                <div id="form-username" class="mt-3">
+                                    <div id="err-username">
+
+                                    </div>
+                                    <br>
+                                    <input class="form-control" type="text" id="username" name="username" value="<%= bot.username %>" required> 
+                                    <button class="btn btn-primary purple mt-2" id="submit-un-btn" onclick="saveUsername()">
+                                        Save Username
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3 d-flex justify-content-center">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title text-main">
+                                    Token
+                                </h4>
+                                <p class="card-text">
+                                    <input type="text" disabled class="form-control disabled text-blur" value="<%= bot.sid %>">
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function saveUsername(){
+            const val = document.getElementById("username");
+            const btn = document.getElementById("submit-un-btn");
+
+            val.disabled = true;
+            btn.disabled = true;
+
+            const value = val.value;
+
+            const err = (msg) => {
+                const ez = document.getElementById("err-username");
+
+                ez.innerHTML = `<p class="text-red">${msg}</p>`
+                val.disabled = false;
+                btn.disabled = false;
+            }
+
+            if(!value) return err("Please insert a username!");
+
+            let postData = {
+                username: value
+            }
+            let formBody = [];
+            for (var property in postData) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(postData[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+
+            fetch(`/@me/update/username`, {
+                method: "post",
+                headers: {
+                    "sid": "<%= bot.sid %>",
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: formBody
+            }).then(r=>r.json())
+                .then(d=> {
+                    if(d.code !== 200) return err(d.msg);
+                    const ez = document.getElementById("err-username");
+
+                    ez.innerHTML = `<p class="text-purple">${d.msg}</p>`
+                    val.disabled = false;
+                    btn.disabled = false;
+                })
+        }
+    </script>
+    <script>
+
+const qStr = window.location.search;
+    const qParams = new URLSearchParams(qStr);
+
+    if (qParams.has('e')) {
+        const err = qParams.get('e');
+         if(err == "ref"){
+            window.location.href = '/';
+        }
+    }
+    </script>
+<%- include('../parts/home/footer.ejs') %> 

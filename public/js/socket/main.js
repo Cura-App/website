@@ -169,10 +169,27 @@ socket.on("new-msg", (data) => {
         const thread = document.getElementById("thread");
 
         const template = () => {
+            let bot_badge = ``;
+
+            if(data.author.badges.bot.is){
+                bot_badge = `
+                    <span class="badge badge-primary purple">
+                        Bot
+                    </span>
+                `
+                if(data.author.badges.bot.verified) bot_badge = `
+                    <span class="badge badge-primary">
+                        <img src="/media/svg/check-circle.svg" height="10" data-toggle="tooltip" title="Verified Bot"> Bot
+                    </span>
+                `
+            }
+
             return `
             <div class="instance">
                 <span class="company-text">
-                    <a href="/@/${data.author.id}">${username}</a>: ${content}
+                    <a href="/@/${data.author.id}">${username}</a> ${bot_badge}
+                    
+                    <br>${content}
                 </span>
             </div>
             `

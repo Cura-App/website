@@ -11,6 +11,8 @@ const guild = Schema({
     users: Array, 
     banned: Array,
     owner: String,
+    admins: Array,
+    mods: Array,
     logs: Array,
     disabled: {
         type: Boolean,

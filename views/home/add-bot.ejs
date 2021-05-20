@@ -1,0 +1,48 @@
+<%- include('../parts/home/head.ejs') %> 
+
+    <div class="container">
+        <div class="text-center title">
+            <h1 class="text-main" style="margin-top: 100px;">
+                Add <span class="text-purple"><%= bot.username %></span>
+            </h1>
+            <h3 class="subtitle mb-4">
+                <% if(bot.bot){ %>
+                    <% if(bot.dev){ %>
+                        <span class="badge badge-primary">
+                            <img src="/media/svg/check-circle.svg" height="22" data-toggle="tooltip" title="Verified Bot"> Bot
+                        </span>
+                    <% } else { %>
+                        <span class="badge badge-primary purple">
+                            Bot
+                        </span>
+                    <% } %>
+                <% } %>
+            </h3>
+            <hr>
+            <div class="buttons">
+                <form action="/bot/authorize?app_id=<%= bot.id %>&perm=<%= perm %>" method="post">
+                    <select class="form-control mb-2" name="guild" aria-label="Select Guild">
+                        <option selected>Select Guild</option>
+                        <% guilds.forEach(x => { %>
+                            <option value="<%= x.id %>"><%= x.name %></option>
+                        <% }); %>
+                    </select>
+                    <button class="btn btn-primary purple">Authorize Bot</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        const qStr = window.location.search;
+        const qParams = new URLSearchParams(qStr);
+
+        if (qParams.has('e')) {
+            const err = qParams.get('e');
+            if(err == "ref"){
+                window.location.href = '/';
+            }
+        }
+    </script>
+<%- include('../parts/home/footer.ejs') %> 

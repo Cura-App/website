@@ -1,0 +1,7 @@
+.badge.badge-primary {
+    background-color: var(--d-cyan);
+}
+
+.badge.badge-primary.purple {
+    background-color: var(--d-purple);
+}

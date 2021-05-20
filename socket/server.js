@@ -10,6 +10,7 @@ let cooldowns = {};
 cooldowns.newChannel = new Set();
 cooldowns.startDM = new Set();
 cooldowns.sendMessage = new Set();
+cooldowns.validate_account = new Set();
 
 // ? Models
 const userModel = require('../models/user');
@@ -25,9 +26,11 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
+let io = null;
+
 function run(App){
 
-    const io = require('socket.io')(App, {
+    io = require('socket.io')(App, {
         perMessageDeflate: false,
         cors: {
             origin: "*",
@@ -71,6 +74,8 @@ function run(App){
             // ? Proceed to connect to rooms (dms/guilds)
             let rooms = [];
 
+            let msg = `Joined rooms: [${rooms}]`
+
             const dms = await dmModel.find({ 
                 users: {
                     $in: user.id
@@ -84,9 +89,11 @@ function run(App){
             dms.forEach(x => rooms.push(x.id));
             guilds.forEach(x => rooms.push(x.id));
 
+            if(user.bot) rooms.push(`bh:${user.id}`)
+
             socket.join(rooms);
 
-            return fin(false, `Joined rooms: [${rooms}]`);
+            return fin(false, msg);
         });
 
         // ? Send message
@@ -145,6 +152,8 @@ function run(App){
                 id: dm.id
             }
 
+            let gObj = null;
+
             if(dm.type == 0 || dm.type == 100){
                 if(!dm.users.includes(user.id)) return fin(true, "Action Not Allowed");
             } else {
@@ -156,6 +165,11 @@ function run(App){
                     guild: guild.id
                 }
                 isGuild = true;
+
+                gObj = {
+                    id: guild.id,
+                    name: guild.name
+                }
             }
             
             if (contentStr.length > 256) return fin(true, "Message must be under 256 characters!");
@@ -164,6 +178,7 @@ function run(App){
             let msg = {
                 id: msgId,
                 guild: isGuild,
+                guildObject: gObj,
                 channel: {
                     name: dm.name,
                     id: dm.id
@@ -172,7 +187,11 @@ function run(App){
                     id: user.id,
                     username: user.username,
                     badges: {
-                        mod: user.modBadge
+                        mod: user.modBadge,
+                        bot: {
+                            is: user.bot,
+                            verified: user.dev
+                        }
                     }
                 },
                 content: content,
@@ -374,7 +393,9 @@ function run(App){
                 username: user.username
             });
         });
+
     });
 }
 
+module.exports.io = io;
 module.exports.run = run

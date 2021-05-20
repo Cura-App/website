@@ -17,7 +17,20 @@
                     <% dm.thread.forEach(x => { %>
                         <div class="instance">
                             <span class="company-text">
-                                <a href="/@/<%= x.author.id %>"><%= x.author.username %></a>: <%- x.content %>
+                                <a href="/@/<%= x.author.id %>"><%= x.author.username %></a>
+                                <% if(x.author.badges.bot.is){ %>
+                                    <% if(x.author.badges.bot.verified){ %>
+                                        <span class="badge badge-primary">
+                                            <img src="/media/svg/check-circle.svg" height="10" data-toggle="tooltip" title="Verified Bot"> Bot
+                                        </span>
+                                    <% } else { %>
+                                        <span class="badge badge-primary purple">
+                                            Bot
+                                        </span>
+                                    <% } %>
+                                <% } %>
+                                
+                                <br><%- x.content %>
                             </span>
                         </div>
                     <% }); %>

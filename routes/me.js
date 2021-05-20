@@ -105,6 +105,32 @@ router.get("/add", checkAuth, async (req, res) => {
     })
 });
 
+router.get("/bots", checkAuth, async (req, res) => {
+    const bots = await userModel.find({ owner: req.user.id, bot: true });
+
+    return res.render("home/bots.ejs", {
+        pageName: `Bots`,
+        user: req.user,
+        bots
+    })
+});
+
+router.get("/bot/manage/:id", checkAuth, async (req, res) => {
+    const id = req.params.id;
+
+    if(!id) return res.render('errors/error.ejs', { pageName: "Error", msg: "Bot was not found!", user: req.user })
+
+    const bot = await userModel.findOne({ id: id, owner: req.user.id, bot: true });
+
+    if(!bot) return res.render('errors/error.ejs', { pageName: "Error", msg: "Bot was not found!", user: req.user })
+
+    return res.render("home/manage-bot.ejs", {
+        pageName: `Manage ${bot.username}`,
+        user: req.user,
+        bot
+    })
+});
+
 // ? Tools
 async function checkAuth(req, res, next){
     if(req.isAuthenticated()){

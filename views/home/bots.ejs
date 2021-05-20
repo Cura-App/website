@@ -1,0 +1,109 @@
+<%- include('../parts/home/head.ejs') %> 
+
+    <div class="container">
+        <div class="text-center title">
+            <h1 class="text-main" style="margin-top: 100px;">
+                Your bots
+            </h1>
+            <h3 class="subtitle">
+                Manage your bots here!
+            </h3>
+            <div class="buttons">
+                <button href="" class="btn btn-primary purple" onclick="newBot()">New Bot</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-2" style="margin-top: 100px;">
+        <div class="container">
+            <div class="title">
+                <h2 class="text-uppercase text-main">
+                    Bots
+                </h2>
+                <hr>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <% bots.forEach(x => { %>
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3 d-flex justify-content-center">
+
+                            <div class="card" onclick="gotoPage('/@me/bot/manage/<%= x.id %>')">
+                                <div class="card-body">
+                                    <h4 class="card-title text-main">
+                                        <%= x.username %>
+                                    </h4>
+                                </div>
+                            </div>
+    
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+    const qStr = window.location.search;
+    const qParams = new URLSearchParams(qStr);
+
+    if (qParams.has('e')) {
+        const err = qParams.get('e');
+         if(err == "ref"){
+            window.location.href = '/';
+        }
+    }
+    const newBot = () => {
+        Swal.fire({
+            title: 'Create Bot',
+            text: "Please input your bot name.",
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Create',
+            showLoaderOnConfirm: true,
+            preConfirm: (val) => {
+                let postData = {
+                    name: val
+                }
+
+                var formBody = [];
+                for (var property in postData) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(postData[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+
+                return fetch(`/bot/api/new`, {
+                    method: "POST",
+                    headers: {
+                        "sid": "<%= user.sid %>",
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body: formBody
+                    
+                })
+                .then(data =>data.json()).then(response=> {
+                    if(response.code !== 200) {
+                        throw new Error(response.msg)
+                    }
+                    return response;
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(
+                        `Request failed: ${error}`
+                    )
+                })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/@me/bot/manage/' + result.value.msg
+            }
+        })
+    }
+    </script>
+    
+<%- include('../parts/home/footer.ejs') %> 
