@@ -66,9 +66,9 @@ router.post("/api/new", newGuildRateLimit, async (req, res) => {
     const newGuild = new guildModel({
         id: id,
         name: name,
-        users: [user.id],
-        admins: [user.id],
-        mods: [user.id],
+        users: [user.id, env.system_bot_id],
+        admins: [user.id, env.system_bot_id],
+        mods: [user.id, env.system_bot_id],
         owner: user.id
     });
     await newGuild.save();
@@ -141,6 +141,62 @@ router.get("/:id/channel/:cid", checkAuth, async (req, res) => {
     return res.render('app/guild/channel.ejs', data);
 });
 
+router.post('/:id/status/:state', async (req, res) => {
+    const id = req.params.id;
+    const state = req.params.state;
+    const sid = req.header("sid");
+
+    const f = (code, msg) => {
+        return res.status(code).send({
+            code, 
+            msg
+        })
+    }
+
+    if(!id) return f(400, "Action Not Allowed");
+    if(!state) return f(400, "Action Not Allowed");
+    if(!sid) return f(400, "Action Not Allowed");
+
+    const user = await userModel.findOne({ sid: sid, disabled: false, terminated: false });
+    if(!user) return f(400, "Action Not Allowed");
+
+    if(user.role < 998) return f(401, "Action Not Allowed");
+
+    const guild = await guildModel.findOne({ 
+        id: id
+    })
+
+    if(state == "disable"){
+        await guildModel.findOneAndUpdate({
+            id: id
+        }, {
+            disabled: true,
+            $push: {
+                logs: {
+                    title: `Guild disabled`,
+                    content: `This guild has been disabled by Team Cura.`,
+                    by: user.username
+                }
+            }
+        })
+        return f(200, "Guild disabled.");
+    } else {
+        await guildModel.findOneAndUpdate({
+            id: id
+        }, {
+            disabled: false,
+            $push: {
+                logs: {
+                    title: `Guild enabled`,
+                    content: `This guild has been enabled by Team Cura.`,
+                    by: user.username
+                }
+            }
+        })
+        return f(200, "Guild enabled.");
+    }
+});
+
 router.get("/:id", checkAuth, async (req, res) => {
     const id = req.params.id;
     let canMod = false;
@@ -167,6 +223,7 @@ router.get("/:id", checkAuth, async (req, res) => {
         channels,
         guild,
         guilds: guilds.reverse(),
+        members: guild.users.reverse().slice(0, 5),
         canMod
     }
 

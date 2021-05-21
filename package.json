@@ -1,6 +1,6 @@
 {
   "name": "discord-clone",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.4.1",
     "cookie-parser": "^1.4.5",
+    "cura-app.js": "^1.0.3",
     "discord-markdown": "^2.4.2",
     "discord.js": "^12.5.3",
     "dompurify": "^2.2.7",

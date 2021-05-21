@@ -1,3 +1,4 @@
 - [ ] Add decline friendship
+- [ ] Add mentions... sometime ig
 - [ ] Add moderation for guilds
 - [x] Invite bots to guilds

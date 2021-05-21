@@ -187,7 +187,7 @@ socket.on("new-msg", (data) => {
             return `
             <div class="instance">
                 <span class="company-text">
-                    <a href="/@/${data.author.id}">${username}</a> ${bot_badge}
+                    <a  href="javascript:void(0)" onclick="showUserMenu('${data.author.id}', '${username}')">${username}</a> ${bot_badge}
                     
                     <br>${content}
                 </span>
@@ -207,4 +207,12 @@ socket.on("new-msg", (data) => {
             return notification(`New message in: ${channelName}`, `/channel/${data.channel.id}`);
         }
     }
-})
+});
+
+const banUser = (id, gid) => {
+    socket.emit("guild-user-ban", {
+        gId: gid,
+        sid: getUserSID(),
+        id: id
+    });
+}

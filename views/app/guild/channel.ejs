@@ -5,9 +5,25 @@
 </script>
 <%- include('../../parts/app/head.ejs') %> 
     <script>
+        const showUserMenu = (id, username) => {
+            const moderate = '<%= guild.admins.includes(user.id) %>';
 
-        const getThreadId = `<%= dm.id %>`;
-
+            let banBtn = ``;
+            if(moderate === 'true') banBtn = `<button class="btn btn-outline-danger" onclick="banUser('${id}', '<%= guild.id %>')">
+                                        Ban
+                                    </button>`
+            Swal.fire({
+                title: username,
+                html: `
+                    <h3 class="text-center">
+                        <button class="btn btn-outline-primary" onclick="gotoPage('/@/${id}')">
+                            Profile
+                        </button>
+                        ${banBtn}
+                    </h3>
+                `
+            });
+        }
     </script>
 
     <div class="h-full" id="app">
@@ -22,7 +38,7 @@
                     <% dm.thread.forEach(x => { %>
                         <div class="instance">
                             <span class="company-text">
-                                <a href="/@/<%= x.author.id %>"><%= x.author.username %></a>
+                                <a href="javascript:void(0)" onclick="showUserMenu('<%= x.author.id %>', '<%= x.author.username %>')"><%= x.author.username %></a>
                                 <% if(x.author.badges.bot.is){ %>
                                     <% if(x.author.badges.bot.verified){ %>
                                         <span class="badge badge-primary">

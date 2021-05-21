@@ -212,6 +212,9 @@ app.post('/register', checkNotAuth, async (req, res) => {
         if (field.password.length < 6 || field.password == undefined) return callError('Minimum password length is 6 characters!')
         const findUser = await userModel.findOne({ email: field.email.toLowerCase() });
 
+        const usernameEx = await userModel.findOne({ username: field.name });
+        if(usernameEx) return callError("Username already in use.");
+
         const safeIdUsername = field.name.replace(/[^A-Z0-9]+/ig, "_").toLowerCase();
 
         const idExists = await userModel.findOne({ id: RandomId });
@@ -292,4 +295,5 @@ var server = httpClient.listen(process.env.port, () => {
 module.exports.serverClient = server;
 
 require('./socket/server').run(server);
+require('./bot/main').run();
 //https://github.com/Cura-App/website

@@ -74,8 +74,6 @@ function run(App){
             // ? Proceed to connect to rooms (dms/guilds)
             let rooms = [];
 
-            let msg = `Joined rooms: [${rooms}]`
-
             const dms = await dmModel.find({ 
                 users: {
                     $in: user.id
@@ -84,7 +82,6 @@ function run(App){
             const guilds = await guildModel.find({
                 users: user.id
             });
-
             // ? Add guilds here when they are added in
             dms.forEach(x => rooms.push(x.id));
             guilds.forEach(x => rooms.push(x.id));
@@ -93,6 +90,7 @@ function run(App){
 
             socket.join(rooms);
 
+            let msg = `Joined rooms: [${rooms}]`
             return fin(false, msg);
         });
 
@@ -192,6 +190,9 @@ function run(App){
                             is: user.bot,
                             verified: user.dev
                         }
+                    },
+                    data: {
+                        role: user.role
                     }
                 },
                 content: content,
@@ -200,7 +201,13 @@ function run(App){
             
             await wait(100);
 
-            if (cooldowns.sendMessage.has(sid)) return fin(429, "You're on the fast lane, Slow down there!")
+            if(!user.bot){
+                if (cooldowns.sendMessage.has(sid)) return fin(429, "You're on the fast lane, Slow down there!")
+            } else {
+                if(user.role < 1){
+                    if (cooldowns.sendMessage.has(sid)) return fin(429, "You're on the fast lane, Slow down there!")
+                }
+            }
             cooldowns.sendMessage.add(sid);
             await dmModel.findOneAndUpdate(DMQuery, {
                 $push: {
@@ -358,6 +365,7 @@ function run(App){
                 channel: did
             });
         });
+
         socket.on("typing-stop", async (data) => {
             const did = data.dmId;
             const gid = data.gId;
@@ -394,6 +402,66 @@ function run(App){
             });
         });
 
+        // ? Guild moderation ban/unban
+
+        socket.on("guild-user-ban", async (data) => {
+            const gid = data.gId;
+            const sid = data.sid;
+            const uid = data.id;
+
+            if(!gid) return fin(true, "Action Not Allowed");
+            if(!sid) return fin(true, "Action Not Allowed");
+            if(!uid) return fin(true, "Action Not Allowed");
+
+            const user = await userModel.findOne({ 
+                sid: sid,
+                disabled: false,
+                terminated: false
+            });
+
+            if(!user) return fin(true, "Action Not Allowed");
+            
+            const guild = await guildModel.findOne({ 
+                id: gid,
+                admins: user.id,
+                disabled: false
+            });
+            if(!guild) return fin(true, "Action Not Allowed");
+
+            console.log(uid)
+            const target = await userModel.findOne({ id: uid });
+            if(!target) return fin(true, "User was not found!");
+
+            if(!guild.users.includes(uid)) return fin(true, "User is not a member of this guild!");
+
+            if(uid == user.id) return fin(true, "You can't ban yourself!");
+            if(guild.owner == uid) return fin(true, "You can't ban the owner!");
+
+            async function ban(){
+                await guildModel.findOneAndUpdate({
+                    id: guild.id
+                }, {
+                    $pull: {
+                        users: target.id,
+                        admin: target.id,
+                        mods: target.id
+                    },
+                    $push: {
+                        logs: {
+                            title: `User banned`,
+                            content: `${target.username} was been banned.`,
+                            by: user.username
+                        },
+                        banned: target.id
+                    }
+                });
+
+                return fin(false, "User has been banned!");
+            }
+
+            if(guild.owner == user.id) return ban();
+            if(!guild.admins.includes(target.id)) return ban();
+        });
     });
 }
 

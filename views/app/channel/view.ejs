@@ -5,6 +5,23 @@
 </script>
 <%- include('../../parts/app/head.ejs') %> 
 
+<script>
+    const showUserMenu = (id, username) => {
+        Swal.fire({
+            title: username,
+            html: `
+                <h3 class="text-center">
+                    <button class="btn btn-outline-primary" onclick="gotoPage('/@/${id}')">
+                        Profile
+                    </button>
+                </h3>
+            `
+        });
+    }
+</script>
+
+
+
     <div class="h-full" id="app">
         <div class="flex-init">
             <div class="messages" id="message-container">
@@ -17,7 +34,7 @@
                     <% dm.thread.forEach(x => { %>
                         <div class="instance">
                             <span class="company-text">
-                                <a href="/@/<%= x.author.id %>"><%= x.author.username %></a>
+                                <a href="javascript:void(0)" onclick="showUserMenu('<%= x.author.id %>', '<%= x.author.username %>')"><%= x.author.username %></a>
                                 <% if(x.author.badges.bot.is){ %>
                                     <% if(x.author.badges.bot.verified){ %>
                                         <span class="badge badge-primary">
