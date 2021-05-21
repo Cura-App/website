@@ -437,6 +437,8 @@ function run(App){
             if(uid == user.id) return fin(true, "You can't ban yourself!");
             if(guild.owner == uid) return fin(true, "You can't ban the owner!");
 
+            if(target.id == env.system_bot_id) return fin(true, "You can't ban the system account!");
+
             async function ban(){
                 await guildModel.findOneAndUpdate({
                     id: guild.id

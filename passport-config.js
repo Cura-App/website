@@ -17,6 +17,7 @@ function initialize(passport, getUserByEmail, getUserById) {
           if(user.disabled){
             return done(null, false, { message: 'Your account has been disabled.' })
           }
+          if(user.bot) return done(null, false, {message: "You are unable to log into a bot!"})
 
           const nsid = sidGen();
 
