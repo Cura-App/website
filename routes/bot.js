@@ -15,6 +15,9 @@ const mv = require('mv');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt');
 
+const eventManager = require('../socket/events');
+const event = new eventManager();
+
 // ? other imports
 const io = require("../socket/server").io;
 
@@ -51,7 +54,7 @@ router.get("/authorize", checkAuth, async (req, res) => {
     if(!bot) return e("Bot was not found!");
 
     // Must be admin to add bot to guild!
-    const guilds = await guildModel.find({ admins: user.id });
+    const guilds = await guildModel.find({ admins: user.id, disabled: false });
 
     const data = { 
         pageName: "Add " + bot.username, 
@@ -64,17 +67,25 @@ router.get("/authorize", checkAuth, async (req, res) => {
     return res.render('home/add-bot.ejs', data);
 });
 
-router.post("/authorize", checkAuth, async (req, res) => {
-    const user = req.user;
+router.post("/authorize", async (req, res) => {
+    const sid = req.header("sid");
     const appId = req.query.app_id;
     const permission = req.query.perm;
-    const selected = req.body.guild;
+    const selected = req.query.guild;
 
     const perms = ["admin", "moderator", "user"];
 
     const e = (msg) => {
-        return res.render('errors/error.ejs', { pageName: "Error", msg, user: req.user });
+        return res.status(401).send({ 
+            code: 401,
+            msg
+        })
     }
+
+    if(!sid) return e("Action Not Allowed");
+
+    const user = await userModel.findOne({ sid: sid });
+    if(!user) return e("Action Not Allowed");
 
     if(user.disabled || user.terminated) return e("Action Not Allowed");
 
@@ -124,7 +135,31 @@ router.post("/authorize", checkAuth, async (req, res) => {
         });
     }
 
-    return res.redirect('/g/' + guild.id)
+    event.newGuild({
+        guild: {
+            id: guild.id,
+            name: guild.name
+        },
+        user: {
+            id: user.id,
+            username: user.username
+        }
+    });
+
+    return res.status(200).send({
+        code: 200,
+        msg: guild.id,
+        json: {
+            guild: {
+                id: guild.id,
+                name: guild.name
+            },
+            user: {
+                id: bot.id,
+                username: bot.username
+            }
+        }
+    })
 });
 
 

@@ -4,6 +4,8 @@ const { parser, htmlOutput, toHTML } = require('discord-markdown');
 const shortid = require('shortid');
 const { v4: uuidv4 } = require('uuid');
 const env = process.env;
+const fetch = require('node-fetch');
+
 
 //? Cooldowns
 let cooldowns = {};
@@ -11,6 +13,7 @@ cooldowns.newChannel = new Set();
 cooldowns.startDM = new Set();
 cooldowns.sendMessage = new Set();
 cooldowns.validate_account = new Set();
+cooldowns.add_bot = new Set();
 
 // ? Models
 const userModel = require('../models/user');
@@ -28,6 +31,7 @@ function escapeHtml(unsafe) {
 
 let io = null;
 
+
 function run(App){
 
     io = require('socket.io')(App, {
@@ -37,6 +41,7 @@ function run(App){
             methods: ["GET", "POST"]
         }
     });
+
 
     io.on("connection", async (socket) => {
 
@@ -404,6 +409,55 @@ function run(App){
 
         // ? Guild moderation ban/unban
 
+        socket.on("add-bot", async (data) => {
+            const sid = data.sid;
+            const appId = data.aid;
+            const perm = data.perm;
+            const selection = data.g;
+
+            if(!sid) return fin(true,"Action Not Allowed");
+            if(!appId) return fin(true,"Invalid app_id!");
+            if(!perm) return fin(true,"Invalid permission!");
+            if(!selection) return fin(true,"No guild selected!");
+
+
+            if(cooldowns.add_bot.has(sid)) return fin(true, "You're on the fast lane, Slow down there!")
+
+            cooldowns.add_bot.add(sid);
+
+            setTimeout(() => {
+                cooldowns.add_bot.delete(sid);
+            }, 500)
+
+            fetch(`${env.SITELINK}/bot/authorize?app_id=${appId}&perm=${perm}&guild=${selection}`, {
+                method: "post",
+                headers: {
+                    "sid": sid
+                }
+            }).then(r=>r.json())
+                .then(async d => {
+                    if(d.code !== 200) return fin(true, d.msg)
+
+                    const user = d.json.user;
+
+                    socket.emit("location", {
+                        href: `/g/${d.msg}`
+                    })
+                    
+                    let rooms = [];
+                    const guilds = await guildModel.find({
+                        users: user.id
+                    });
+                    guilds.forEach(x => rooms.push(x.id));
+                    if(user.bot) rooms.push(`bh:${user.id}`)
+                    socket.join(rooms);
+                    let msg = `Joined rooms: [${rooms}]`
+                    fin(false, msg);
+
+                    return io.in(`bh:${d.json.user.id}`).emit("guild-add", d.json)
+                });
+        });
+
         socket.on("guild-user-ban", async (data) => {
             const gid = data.gId;
             const sid = data.sid;
@@ -466,6 +520,8 @@ function run(App){
         });
     });
 }
+
+
 
 module.exports.io = io;
 module.exports.run = run

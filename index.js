@@ -16,6 +16,9 @@ const MongoStore = require('connect-mongo');
 const fs = require('fs');
 const fetch = require('node-fetch');
 
+const events = require("./socket/events");
+const event = new events();
+
 // ? Variables
 const env = process.env;
 // ? Functions

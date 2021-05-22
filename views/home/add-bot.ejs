@@ -20,29 +20,26 @@
             </h3>
             <hr>
             <div class="buttons">
-                <form action="/bot/authorize?app_id=<%= bot.id %>&perm=<%= perm %>" method="post">
-                    <select class="form-control mb-2" name="guild" aria-label="Select Guild">
-                        <option selected>Select Guild</option>
-                        <% guilds.forEach(x => { %>
-                            <option value="<%= x.id %>"><%= x.name %></option>
-                        <% }); %>
-                    </select>
-                    <button class="btn btn-primary purple">Authorize Bot</button>
-                </form>
+                <select class="form-control mb-2" id="guild" name="guild" aria-label="Select Guild">
+                    <option selected>Select Guild</option>
+                    <% guilds.forEach(x => { %>
+                        <option value="<%= x.id %>"><%= x.name %></option>
+                    <% }); %>
+                </select>
+                <button onclick="add_bot()" class="btn btn-primary purple">Authorize Bot</button>
             </div>
         </div>
     </div>
 
     
     <script>
-        const qStr = window.location.search;
-        const qParams = new URLSearchParams(qStr);
-
-        if (qParams.has('e')) {
-            const err = qParams.get('e');
-            if(err == "ref"){
-                window.location.href = '/';
-            }
+        const add_bot = () => {
+            socket.emit("add-bot", {
+                sid: "<%= user.sid %>",
+                aid: "<%= bot.id %>",
+                perm: "<%= perm %>",
+                g: document.getElementById("guild").value
+            });
         }
     </script>
 <%- include('../parts/home/footer.ejs') %> 

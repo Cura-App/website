@@ -14,16 +14,23 @@ const run = async () => {
     }
 
     client.prefix = `/`;
-    client.socketUrl = `ws://localhost:3000`
+    // client.socketUrl = `ws://localhost:3000`
 
     client.on("ready", (d) => {
         console.log(`[BOT | READY]`)
+        client.socket.on("guild-add", (d) => {
+            console.log(d)
+        })
+    })
+
+    client.on("guild-add", (d) => {
+        console.log(d)
     })
 
     client.command({
         name: `help`,
         run: (msg, args) => {
-            return msg.reply(`My prefix is : \`${client.prefix}\`\nI am the official **Cura** system bot!`);
+            return msg.reply(`My prefix is: \`${client.prefix}\`\nI am the official **Cura** system bot!`);
         }
     });
 
