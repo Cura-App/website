@@ -156,6 +156,7 @@ function run(App){
             }
 
             let gObj = null;
+            let MemberObj = null;
 
             if(dm.type == 0 || dm.type == 100){
                 if(!dm.users.includes(user.id)) return fin(true, "Action Not Allowed");
@@ -172,6 +173,15 @@ function run(App){
                 gObj = {
                     id: guild.id,
                     name: guild.name
+                }
+
+                let roleNum = 0;
+                if(guild.mods.includes(user.id)) roleNum = 1;
+                if(guild.admins.includes(user.id)) roleNum = 2;
+                if(guild.owner == user.id) roleNum = 3;
+
+                MemberObj = {
+                    role: roleNum
                 }
             }
             
@@ -200,6 +210,7 @@ function run(App){
                         role: user.role
                     }
                 },
+                member: MemberObj,
                 content: content,
                 str: contentStr
             }
