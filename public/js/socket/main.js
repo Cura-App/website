@@ -184,11 +184,22 @@ socket.on("new-msg", (data) => {
                 `
             }
 
+            let staffBadge = '';
+            if(data.guild){
+                try {
+                    console.log('edfewa')
+                    staffBadge = guild_GetStaffBadge(`${data.member.role}`, `return`);
+                    console.log('sv', staffBadge)
+                } catch(e){
+                    console.log(e)
+                }
+            }
             return `
             <div class="instance">
                 <span class="company-text">
                     <a  href="javascript:void(0)" onclick="showUserMenu('${data.author.id}', '${username}')">${username}</a> ${bot_badge}
-                    
+                    <span id="usb-${data.id}">${staffBadge}</span>
+                            
                     <br>${content}
                 </span>
             </div>

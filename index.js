@@ -33,6 +33,7 @@ function escapeHtml(unsafe) {
 // ? Models
 const userModel = require('./models/user');
 const guildModel = require('./models/guild');
+const premiumModel = require('./models/premium');
 
 // ? CORS
 app.use(function (req, res, next) {
@@ -152,6 +153,41 @@ app.get("/invite/:inv", checkAuth, async (req, res) => {
     return res.redirect(`/g/${guild.id}`);
 });
 
+app.get("/gift/:code", checkAuth, async (req, res) => {
+    const code = req.params.code;
+    const user = req.user;
+    const e = (msg) => {
+        return res.render('errors/error.ejs', { pageName: "Error", msg, user: req.user })
+    }
+
+    if(!code) return e("No gift code provided!");
+    if(user.premium !== "none") return e("You already have premium!");
+
+    const premium = await premiumModel.findOne({
+        code: code
+    });
+    if(!premium) return e("This gift does not exist!");
+    if(premium.claimed) return e("This gift has already been claimed...");
+
+    await userModel.findOneAndUpdate({
+        id: user.id
+    }, {
+        premium: premium.code
+    });
+    await premiumModel.findOneAndUpdate({
+        code: code
+    }, {
+        claimed: true
+    })
+
+    let data = {
+        pageName: "Gift from " + premium.from,
+        user: req.user,
+        gift: premium
+    }
+    res.render('home/claim-premium.ejs', data);
+});
+
 app.get('/login', checkNotAuth, async (req, res) => {
     let loginParam = req.query.next;
     if(!loginParam) loginParam = '/'; 
@@ -233,7 +269,7 @@ app.post('/register', checkNotAuth, async (req, res) => {
                 friendId: friendId,
                 username: field.name, 
                 bot: false,
-                email: field.email, 
+                email: field.email.toLowerCase(), 
                 sid: verifyCode,
                 password: hashedPassword,
                 terminated: false

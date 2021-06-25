@@ -3,6 +3,7 @@
     const getThreadId = `<%= dm.id %>`;
 
 </script>
+<script src="/js/core/renderStaffBadge.js"></script>
 <%- include('../../parts/app/head.ejs') %> 
     <script>
         const showUserMenu = (id, username) => {
@@ -50,7 +51,11 @@
                                         </span>
                                     <% } %>
                                 <% } %>
-                                
+                                <span id="usb-<%= x.id %>"></span>
+                            
+                                <script>
+                                    guild_GetStaffBadge('<%= x.member.role %>', `usb-<%= x.id %>`);
+                                </script>
                                 <br><%- x.content %>
                             </span>
                         </div>

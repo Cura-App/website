@@ -42,6 +42,11 @@ const User = Schema({
         type: Boolean,
         default: false
     },
+    // ? Add premium
+    premium: {
+        type: String, // ? Premium code
+        default: "none"
+    },
     owner: {
         type: String
     },

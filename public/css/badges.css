@@ -5,3 +5,10 @@
 .badge.badge-primary.purple {
     background-color: var(--d-purple);
 }
+
+.badge.badge-primary.admin {
+    background-color: #9147ff;
+}
+.badge.badge-primary.mod {
+    background-color: #08aa12;
+}

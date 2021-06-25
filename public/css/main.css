@@ -113,3 +113,8 @@ a {
 .card {
     background-color: var(--d-bg-dark);
 }
+
+blockquote {
+    border-left: 5px solid var(--d-purple);
+    padding-left: 4px;
+}

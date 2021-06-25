@@ -2,3 +2,4 @@
 - [ ] Add mentions... sometime ig
 - [ ] Add moderation for guilds
 - [x] Invite bots to guilds
+- [ ] Finish badge display for guild channels
