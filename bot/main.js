@@ -12,10 +12,7 @@ const shortId = require('shortid');
 const run = async () => {
     try {
         const bot = await userModel.findOne({ id: env.system_bot_id, disabled: false, terminated: false });
-        if(!bot){
-            console.error('System account was not found!');
-            return process.exit(0);
-        }
+        if(!bot) return console.error('System account was not found!');
 
         client.prefix = `/`;
         // client.socketUrl = `ws://localhost:3000`
