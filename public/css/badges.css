@@ -12,3 +12,15 @@
 .badge.badge-primary.mod {
     background-color: #08aa12;
 }
+
+.d-mention {
+    background: #2196f370;
+    padding: 0px 5px;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: bold;
+    color: white !important;
+}
+.d-mention a {
+    color: white !important;
+}
