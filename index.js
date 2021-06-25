@@ -15,6 +15,7 @@ const cookieParser = require('cookie-parser')
 const MongoStore = require('connect-mongo');
 const fs = require('fs');
 const fetch = require('node-fetch');
+const snow = require('./utils/snowflake');
 
 const events = require("./socket/events");
 const event = new events();
@@ -228,7 +229,7 @@ app.post('/login', checkNotAuth, passport.authenticate('local', {
 
 app.post('/register', checkNotAuth, async (req, res) => {
     try {
-        const RandomId =  "-" + shortid.generate();
+        const RandomId = snow.createSnowFlake();
         const field = req.body;
         const hashedPassword = await bcrypt.hash(field.password, 10);
 

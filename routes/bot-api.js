@@ -65,7 +65,7 @@ router.post("/new", async (req, res) => {
     if(bots.length >= 3) return f(401, "You can only have 3 bots at a time!");
 
     const verifyCode = `bt:` + uuidv4(); 
-    const RandomId =  "-" + shortid.generate();
+    const RandomId =  require('../utils/snowflake').createSnowFlake();
     const fullId = Date.now() + RandomId;
     const friendId = shortid.generate();
 

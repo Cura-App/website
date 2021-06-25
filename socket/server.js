@@ -5,6 +5,7 @@ const shortid = require('shortid');
 const { v4: uuidv4 } = require('uuid');
 const env = process.env;
 const fetch = require('node-fetch');
+const snow = require('../utils/snowflake');
 
 
 //? Cooldowns
@@ -272,7 +273,7 @@ function run(App){
             if (cooldowns.newChannel.has(sid)) return fin(429, "You can't create channels this fast!")
             
             cooldowns.newChannel.add(sid);
-            const channelId = uuidv4();
+            const channelId = snow.createSnowFlake();
             const newChannel = new dmModel({
                 id: channelId,
                 name: name,
@@ -325,7 +326,7 @@ function run(App){
 
             if (cooldowns.startDM.has(sid)) return fin(429, "You're meeting new people too fast 0_0")
             cooldowns.startDM.add(sid);
-            const dmId = uuidv4();
+            const dmId = snow.createSnowFlake();
             const newDm = new dmModel({
                 id: dmId,
                 name: `${user.username} & ${friend.username}`,

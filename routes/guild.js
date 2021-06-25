@@ -61,7 +61,7 @@ router.post("/api/new", newGuildRateLimit, async (req, res) => {
 
     if(guilds.length >= env.maxGuilds) return f(401, `You cannot make more then ${env.maxGuilds} guilds!`);
 
-    const id = uuidv4();
+    const id = require('../utils/snowflake').createSnowFlake();
 
     const newGuild = new guildModel({
         id: id,
