@@ -126,7 +126,26 @@ function run(App){
             let contentStr = content;
             if(!contentStr) return fin(true, "Please provide some content for the message!");
 
-            content = toHTML(content);
+            const users = await userModel.find({
+                disabled: false,
+                terminated: false
+            })
+    
+            function Mention(node){
+                try {
+                    return '<a href="/@/' + node.id + `">@` + users.filter(x => x.id === node.id)[0].username + '</a>'
+                } catch(e){
+                    return '@Unknown'
+                }
+            }
+
+            content = toHTML(content, {
+                discordCallback: {
+                    user: node => {
+                        return Mention(node)
+                    }
+                }
+            });
 
             if(!content) return fin(true, "Please provide some content for the message!");
 
