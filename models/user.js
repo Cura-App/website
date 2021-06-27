@@ -22,9 +22,9 @@ const User = Schema({
     email: String,
     owner: String, // ? If the user is a bot add this
     password: String,
-    online: {
-        type: Date,
-        default: '2021-03-26T08:23:57.661+00:00'
+    status: {
+        type: String,
+        default: "OFFLINE"
     },
     joinedAt: {
         type: Date,
@@ -72,7 +72,8 @@ const User = Schema({
     sid: { 
         type: String,
         default: 'empty'
-    }
+    },
+    socket: String
 });
 
 module.exports = model('User', User);

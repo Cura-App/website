@@ -1,3 +1,7 @@
+<script>
+    const getUserRole = parseInt('0');
+</script>
+
 <%- include('../../parts/app/head.ejs') %> 
 
     <script>
@@ -97,7 +101,7 @@
                                             <hr>
                                             <div id="invites">
                                                 <% guild.invites.forEach(x => { %>
-                                                    <div onclick="gotoPage('/invite/<%= x %>')" class="channel">
+                                                    <div class="channel">
                                                         https://cura-app.tk/invite/<%= x %>
                                                     </div>
                                                     <br>

@@ -34,13 +34,12 @@
     <link rel="stylesheet" href="/css/app/memberBar.css">
     <link rel="stylesheet" href="/css/badges.css">
     <script>
-        function _imgError(elId){
-            const errorElement = document.getElementById(elId);
-            if(errorElement){
-                console.log(`[IMG-ERR | HANDLED](${elId})`);
-                errorElement.src = '//voltra.xyz/media/user/1618256387298Z5Ygx6bwrunknown.png'
+        function _imgError(el){
+            if(el){
+                console.log(`[IMG-ERR | HANDLED](${el.id})`);
+                el.src = '/media/root/logo.png'
             } else {
-                console.warn(`[IMG-ERR | FAILED](${elId})`);
+                console.warn(`[IMG-ERR | FAILED](${el.id})`);
             }
         }
         function gotoPage(endpoint){

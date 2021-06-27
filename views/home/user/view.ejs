@@ -1,3 +1,6 @@
+<script>
+    const getUserRole = parseInt('0');
+</script>
 <%- include('../../parts/home/head.ejs') %> 
 
     <div class="container">
@@ -27,8 +30,16 @@
             </h3>
             <hr>
             <div class="buttons">
-                <button class="btn btn-outline-primary rounded" onclick="startDM('<%= friend.id %>')"><i class="fi-br-comment"></i> Message</button>
+                <button class="btn btn-outline-primary rounded" onclick="StartThread('<%= friend.id %>')"><i class="fi-br-comment"></i> Message</button>
             </div>
+            <script>
+                const StartThread = (fid) => {
+                    socket.emit("start-dm", {
+                        sid: usid,
+                        fid: fid
+                    });
+                }
+            </script>
         </div>
     </div>
 

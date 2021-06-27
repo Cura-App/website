@@ -102,3 +102,22 @@ nav {
     width: 10rem; 
     height: 10rem;
 }
+
+blockquote.embed {
+    border-color: var(--d-grey-transparent);
+}
+
+blockquote.embed .img-holder {
+    float: left;
+}
+
+blockquote.embed .image {
+    width: 50px;
+    height: auto;
+    border-radius: 10px;
+    vertical-align: middle;
+} 
+
+blockquote.embed .title {
+    font-family: var(--font-2);
+}

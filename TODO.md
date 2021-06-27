@@ -1,5 +1,6 @@
 - [ ] Add decline friendship
-- [ ] Add mentions... sometime ig
+- [x] Add mentions... sometime ig
 - [ ] Add moderation for guilds
 - [x] Invite bots to guilds
-- [ ] Finish badge display for guild channels
+- [x] Finish badge display for guild channels
+- [ ] Finish user statuses

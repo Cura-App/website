@@ -6,7 +6,11 @@ const { v4: uuidv4 } = require('uuid');
 const env = process.env;
 const fetch = require('node-fetch');
 const snow = require('../utils/snowflake');
+const bot = require('../bot/main');
+const setEmbed = require('../utils/setEmbed');
+const { textEmoji } = require('markdown-to-text-emoji'); 
 
+let cache = {};
 
 //? Cooldowns
 let cooldowns = {};
@@ -15,6 +19,7 @@ cooldowns.startDM = new Set();
 cooldowns.sendMessage = new Set();
 cooldowns.validate_account = new Set();
 cooldowns.add_bot = new Set();
+cooldowns.set_status = new Set();
 
 // ? Models
 const userModel = require('../models/user');
@@ -53,15 +58,45 @@ function run(App){
                 msg: msg
             });
         }
-        const success = (msg) => {
-            socket.emit("s-status", {
-                msg: msg
-            });
-        }
 
         // ? Disconnect handler
-        socket.on("disconnect", (e) => {
+        socket.on("disconnect", async (e) => {
+            let socketId = socket.id;
             delete socket.id;
+
+            const user = await userModel.findOne({
+                socket: socketId,
+                disabled: false,
+                terminated: false
+            });
+
+            if(!user) return;
+
+            await userModel.findOneAndUpdate({
+                socket: socketId
+            }, {
+                status: "OFFLINE"
+            });
+
+            let rooms = [];
+
+            const dms = await dmModel.find({ 
+                users: {
+                    $in: user.id
+                } 
+            });
+            const guilds = await guildModel.find({
+                users: user.id
+            });
+            // ? Add guilds here when they are added in
+            dms.forEach(x => rooms.push(x.id));
+            guilds.forEach(x => rooms.push(x.id));
+
+            return io.in(rooms).emit("user-presence", {
+                userId: user.id,
+                newStatus: "OFFLINE",
+                oldStatus: user.status
+            });
         });
 
         // ? Connect user to dms/guilds
@@ -95,6 +130,9 @@ function run(App){
             if(user.bot) rooms.push(`bh:${user.id}`)
 
             socket.join(rooms);
+
+            user.socket = socket.id;
+            await user.save();
 
             let msg = `Joined rooms: [${rooms}]`
             return fin(false, msg);
@@ -131,6 +169,19 @@ function run(App){
                 terminated: false
             })
     
+            await setEmbed(data)
+
+            let embed = null;
+
+            if(data.embed) embed = data.embed;
+
+            if(embed){
+                if(!embed.description) embed.description = "";
+                if(!embed.image) embed.image = "";
+                if(!embed.title) embed.title = "-";
+                if(!embed.url) embed.url = "-";
+            }
+
             function Mention(node){
                 try {
                     return '<a href="/@/' + node.id + `">@` + users.filter(x => x.id === node.id)[0].username + '</a>'
@@ -139,7 +190,7 @@ function run(App){
                 }
             }
 
-            content = toHTML(content, {
+            content = toHTML(textEmoji(content), {
                 discordCallback: {
                     user: node => {
                         return Mention(node)
@@ -232,7 +283,9 @@ function run(App){
                 },
                 member: MemberObj,
                 content: content,
-                str: contentStr
+                embed: embed,
+                str: contentStr,
+                deleted: false
             }
             
             await wait(100);
@@ -257,6 +310,153 @@ function run(App){
 
             if(guild) io.in(guild.id).emit("new-msg", msg);
             return io.in(dm.id).emit("new-msg", msg);
+        });
+
+        socket.on("user-presence", async (data) => {
+            let sid = data.sid;
+            let status = data.status;
+
+            if(!sid) return fin(true, "Action Not Allowed");
+            if(!status) return fin(true, "Action Not Allowed");
+
+            let Allowed = ["ONLINE", "IDLE", "DND", "OFFLINE"];
+
+            if(!Allowed.includes(status)) return fin(true, "Action Not Allowed");
+
+            if(cooldowns.set_status.has(sid)) return fin(true, "Action Not Allowed");
+
+            const user = await userModel.findOne({
+                sid: sid,
+                disabled: false,
+                terminated: false
+            });
+
+            if(!user) return fin(true, "Action Not Allowed");
+
+            await userModel.findOneAndUpdate({
+                id: user.id,
+                sid: sid
+            }, {
+                status: status
+            })
+
+            cooldowns.set_status.add(sid);
+
+            setTimeout(() => {
+                cooldowns.set_status.delete(sid);
+            }, 100) // .1s
+
+            let rooms = [];
+
+            const dms = await dmModel.find({ 
+                users: {
+                    $in: user.id
+                } 
+            });
+            const guilds = await guildModel.find({
+                users: user.id
+            });
+            // ? Add guilds here when they are added in
+            dms.forEach(x => rooms.push(x.id));
+            guilds.forEach(x => rooms.push(x.id));
+
+            setTimeout(async() => {
+                await userModel.findOneAndUpdate({
+                    id: user.id,
+                    sid: sid
+                }, {
+                    status: "OFFLINE"
+                })
+                return io.in(rooms).emit("user-presence", {
+                    userId: user.id,
+                    newStatus: "OFFLINE",
+                    oldStatus: status
+                });
+            }, 15 * 60 * 1000);
+
+            return io.in(rooms).emit("user-presence", {
+                userId: user.id,
+                newStatus: status,
+                oldStatus: user.status
+            });
+        }); 
+
+        socket.on("message-delete", async (data) => {
+            try {
+                const dmId = data.dmId;
+                const msg = data.msg;
+                const sid = data.sid;
+                const guildId = data.gid ? data.gid : 'none';
+
+                if(!dmId) return fin(true, "Action Not Allowed");
+                if(!msg) return fin(true, "Action Not Allowed");
+                if(!sid) return fin(true, "Action Not Allowed");
+                if(!guildId) return fin(true, "Action Not Allowed");
+
+                const user = await userModel.findOne({ 
+                    sid: sid,
+                    terminated: false,
+                    disabled: false
+                });
+
+                if(!user) return fin(true, "Action Not Allowed");
+
+                let canDelete = false;
+                let mid = msg.substring(4);
+
+                let gg = null;
+
+                if(guildId === "none"){
+                    return fin(true, "Not supported");
+                } else {
+                    // for guilds
+                    const guild = await guildModel.findOne({
+                        id: guildId,
+                        disabled: false,
+                        users: user.id
+                    });
+                    if(!guild) return fin(true, "Action Not Allowed");
+
+                    gg = guild;
+
+                    const channel = await dmModel.findOne({ 
+                        id: dmId, 
+                        guild: guild.id
+                    });
+
+                    if(!channel) return fin(true, "Channel not found!");
+
+
+                    let msgObj = channel.thread.filter(x => mid === x.id);
+                    msgObj = msgObj[0];
+
+                    if(!msgObj) return fin(true, "Message not found!");
+                    if(msgObj.author.id === user.id) canDelete = true;
+
+                    if(guild.mods.includes(user.id)) canDelete = true;
+                }
+
+                if(!canDelete) return fin(true, "Action Not Allowed");
+
+                await dmModel.findOneAndUpdate({
+                    id: dmId, 
+                    guild: gg.id,
+                    'thread.id': mid
+                }, {
+                    $pull: {
+                        thread: {
+                            id: mid
+                        }
+                    }
+                })
+
+                if(gg) io.in(gg.id).emit("msg-deleted", msg);
+
+                return fin(false, "Message deleted!");
+            } catch(e){
+                console.log(e)
+                return fin(true, "Action not supported");
+            }
         });
 
         // ? Create channel
@@ -303,6 +503,11 @@ function run(App){
             setTimeout(() => {
                 cooldowns.newChannel.delete(sid);
             }, 5000)
+
+            setTimeout(() => {
+                bot.sendMsg(`Welcome to the start of #${name}!`, gid, channelId);
+            }, 1000)
+
             return socket.emit("location", {
                 href: `/g/${gid}/channel/${channelId}`
             });

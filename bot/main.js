@@ -15,7 +15,7 @@ const run = async () => {
         if(!bot) return console.error('System account was not found!');
 
         client.prefix = `/`;
-        // client.socketUrl = `ws://localhost:3000`
+        client.socketUrl = `ws://localhost:3000`
 
         client.on("ready", (d) => {
             console.log(`[BOT | READY]`)
@@ -94,18 +94,22 @@ const run = async () => {
             description: `Announce a message in this channel.`,
             show: true,
             run: (msg, args) => {
-                if(!msg.member.role) return msg.reply('Yikes, this command is not supported on the current Cura *yet*!');
                 if(msg.member.role < 1) return msg.reply("You must be a `moderator` to do this!");
             
                 if(!args[0]) return msg.reply("Please provide me a message to send as announcement!");
 
-                return msg.reply(`> **⚠️ Announcement**\n${args.join(" ")}`)
+                return msg.reply(`> **⚠️ Announcement**\n${args.join(" ")}\n\nBy: <@${msg.author.id}>`)
             }
         })
 
         client.login(bot.sid);
     } catch(e){
         console.log(e);
+    }
+
+
+    module.exports.sendMsg = (content, guildId, dm) => {
+        client.send(content, guildId, dm);
     }
 }
 

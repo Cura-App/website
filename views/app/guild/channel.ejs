@@ -1,6 +1,15 @@
+<%
+    let userRole = 0;
+
+    if(guild.mods.includes(user.id)) userRole = 1;
+    if(guild.admins.includes(user.id)) userRole = 2;
+    if(guild.owner === user.id) userRole = 3;
+%>
+
 <script>
 
     const getThreadId = `<%= dm.id %>`;
+    const getUserRole = parseInt('<%= userRole %>');
 
 </script>
 <script src="/js/core/renderStaffBadge.js"></script>
@@ -37,7 +46,7 @@
                         </h3>
                     <% } %>
                     <% dm.thread.forEach(x => { %>
-                        <div class="instance">
+                        <div class="instance" id="msg-<%= x.id %>">
                             <span class="company-text">
                                 <a href="javascript:void(0)" onclick="showUserMenu('<%= x.author.id %>', '<%= x.author.username %>')"><%= x.author.username %></a>
                                 <% if(x.author.badges.bot.is){ %>
@@ -56,7 +65,26 @@
                                 <script>
                                     guild_GetStaffBadge('<%= x.member.role %>', `usb-<%= x.id %>`);
                                 </script>
+                                <% if(user.id === x.author.id){ %>
+                                    <button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>
+                                <% } else if(guild.mods.includes(user.id)){ %>
+                                    <button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>
+                                <% } %>
                                 <br><%- x.content %>
+                                <% if(x.embed){ %>
+                                    <blockquote class="embed">
+                                        <div class="img-holder">
+                                            <img class="image" src="<%= x.embed.image %>" onerror="_imgError(this)">
+                                        </div>
+                                        <h4 class="title">
+                                            &nbsp;<%= x.embed.title %>
+                                        </h4>
+                                        <br>
+                                        <p class="meta">
+                                            <%= x.embed.description %>
+                                        </p>
+                                    </blockquote>
+                                <% } %>
                             </span>
                         </div>
                     <% }); %>

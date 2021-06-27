@@ -2,8 +2,10 @@ const socket = io.connect(getWSConn(), { transforms: [] });
 const usid = getUserSID();
 const uid = getUserId();
 const usern = getUserName();
+const userRole = getUserRole ? getUserRole : 0;
 let typing = [];
 let typingUsers = {};
+let statusCache = [];
 
 // Audio
 function play_notification_sound() {
@@ -13,11 +15,33 @@ function play_notification_sound() {
     audio.play();
 }
 
+function userPresence(STATUS){
+    socket.emit("user-presence", {
+        sid: usid,
+        status: STATUS
+    }); 
+}
+
 (() => {
     socket.emit("validate-account", {
         sid: usid
-    })
+    });
+
+    setTimeout(() => {
+        userPresence("ONLINE")
+    },100)
 })()
+
+window.addEventListener("beforeunload", () => {
+    userPresence("OFFLINE")
+})
+
+socket.on("user-presence", (data) => {
+    console.log(data)
+    statusCache[data.userId] = {
+        status: data.newStatus.toLowerCase()
+    };
+})
 
 socket.on("status", (data) => {
     console.log(data);
@@ -165,6 +189,8 @@ socket.on("new-msg", (data) => {
             }
         }
 
+        let userStatus = statusCache[data.author.id].status;
+
         const content = data.content;
         const thread = document.getElementById("thread");
 
@@ -187,20 +213,46 @@ socket.on("new-msg", (data) => {
             let staffBadge = '';
             if(data.guild){
                 try {
-                    console.log('edfewa')
                     staffBadge = guild_GetStaffBadge(`${data.member.role}`, `return`);
-                    console.log('sv', staffBadge)
                 } catch(e){
                     console.log(e)
                 }
             }
+
+            let delBtn = ``;
+
+            if(data.guild){
+
+                if(userRole > 0) delBtn = `<button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>`
+                if(data.author.id === uid) delBtn = `<button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>`
+
+            }
+
+            let embedMsg = ``;
+
+            if(data.embed) embedMsg = `
+                <blockquote class="embed">
+                    <div class="img-holder">
+                        <img class="image" src="${data.embed.image}" onerror="_imgError(this)">
+                    </div>
+                    <h4 class="title">
+                        &nbsp;${data.embed.title}
+                    </h4>
+                    <br>
+                    <p class="meta">
+                        ${data.embed.description}
+                    </p>
+                </blockquote>
+            `;
+
             return `
-            <div class="instance">
+            <div class="instance" id="msg-${data.id}">
                 <span class="company-text">
-                    <a  href="javascript:void(0)" onclick="showUserMenu('${data.author.id}', '${username}')">${username}</a> ${bot_badge}
+                    <a  href="javascript:void(0)" onclick="showUserMenu('${data.author.id}', '${username}')"><!--<i class="fas fa-dot-circle ${userStatus}"></i>--> ${username}</a> ${bot_badge}
                     <span id="usb-${data.id}">${staffBadge}</span>
-                            
+                    ${delBtn}
                     <br>${content}
+                    ${embedMsg}
                 </span>
             </div>
             `
@@ -220,10 +272,24 @@ socket.on("new-msg", (data) => {
     }
 });
 
+socket.on("msg-deleted", (d) => {
+    console.log(d)
+    document.getElementById(d).remove()
+});
+
 const banUser = (id, gid) => {
     socket.emit("guild-user-ban", {
         gId: gid,
         sid: getUserSID(),
         id: id
     });
+}
+
+const deleteMessage = (msgid, dmId, guildId) => {
+    socket.emit("message-delete", {
+        sid: usid,
+        msg: msgid,
+        dmId: dmId,
+        gid: guildId
+    })
 }
