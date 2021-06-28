@@ -32,10 +32,6 @@ function userPresence(STATUS){
     },100)
 })()
 
-window.addEventListener("beforeunload", () => {
-    userPresence("OFFLINE")
-})
-
 socket.on("user-presence", (data) => {
     console.log(data)
     statusCache[data.userId] = {

@@ -105,6 +105,9 @@ nav {
 
 blockquote.embed {
     border-color: var(--d-grey-transparent);
+    background: var(--d-bg-dark);
+    padding: 3px;
+    border-radius: 5px 10px 10px 5px;
 }
 
 blockquote.embed .img-holder {
