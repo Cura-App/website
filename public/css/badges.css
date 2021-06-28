@@ -24,3 +24,7 @@
 .d-mention a {
     color: white !important;
 }
+
+.instance .badge {
+    text-transform: uppercase;
+}

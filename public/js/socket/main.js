@@ -16,6 +16,7 @@ function play_notification_sound() {
 }
 
 function userPresence(STATUS){
+    return;
     socket.emit("user-presence", {
         sid: usid,
         status: STATUS
@@ -175,13 +176,12 @@ socket.on("new-msg", (data) => {
     try {
         if(data.channel.id !== getThreadId){
             if(data.author.id == uid) return;
-
             if(!data.guild){
                 play_notification_sound()
                 return notification(`New message from: ${username}`, `/channel/${data.channel.id}`);
             } else {
                 play_notification_sound()
-                return notification(`New message in: ${channelName}`, `/channel/${data.channel.id}`);
+                return notification(`New message in: ${channelName}`, `/g/${data.guildObject.id}/channel/${data.channel.id}`);
             }
         }
 

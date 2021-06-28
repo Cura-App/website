@@ -92,6 +92,7 @@ function run(App){
             dms.forEach(x => rooms.push(x.id));
             guilds.forEach(x => rooms.push(x.id));
 
+            return;
             return io.in(rooms).emit("user-presence", {
                 userId: user.id,
                 newStatus: "OFFLINE",
@@ -313,6 +314,8 @@ function run(App){
         });
 
         socket.on("user-presence", async (data) => {
+            return fin(true, "501");
+
             let sid = data.sid;
             let status = data.status;
 

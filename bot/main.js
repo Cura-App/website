@@ -15,7 +15,7 @@ const run = async () => {
         if(!bot) return console.error('System account was not found!');
 
         client.prefix = `/`;
-        client.socketUrl = `ws://localhost:3000`
+        // client.socketUrl = `ws://localhost:3000`
 
         client.on("ready", (d) => {
             console.log(`[BOT | READY]`)
@@ -90,15 +90,15 @@ const run = async () => {
         });
 
         client.command({
-            name: `announce`,
+            name: `say`,
             description: `Announce a message in this channel.`,
             show: true,
             run: (msg, args) => {
-                if(msg.member.role < 1) return msg.reply("You must be a `moderator` to do this!");
+                // if(msg.member.role === 0) return msg.reply("You must be a `moderator` to do this!");
             
-                if(!args[0]) return msg.reply("Please provide me a message to send as announcement!");
+                if(!args[0]) return msg.reply("Please provide something that i can say!");
 
-                return msg.reply(`> **⚠️ Announcement**\n${args.join(" ")}\n\nBy: <@${msg.author.id}>`)
+                return msg.reply(`> **Incoming message!**\n${args.join(" ")}\n\nBy: <@${msg.author.id}>`)
             }
         })
 
