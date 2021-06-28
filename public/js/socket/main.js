@@ -223,8 +223,8 @@ socket.on("new-msg", (data) => {
 
             if(data.guild){
 
-                if(userRole > 0) delBtn = `<button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>`
-                if(data.author.id === uid) delBtn = `<button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>`
+                if(userRole > 0) delBtn = `<button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-${data.id}', '${data.channel.id}', '${data.guildObject.id}')">Delete</button>`
+                if(data.author.id === uid) delBtn = `<button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-${data.id}', '${data.channel.id}', '${data.guildObject.id}')">Delete</button>`
 
             }
 

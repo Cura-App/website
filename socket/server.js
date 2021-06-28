@@ -388,10 +388,10 @@ function run(App){
                 const sid = data.sid;
                 const guildId = data.gid ? data.gid : 'none';
 
-                if(!dmId) return fin(true, "Action Not Allowed");
-                if(!msg) return fin(true, "Action Not Allowed");
+                if(!dmId) return fin(true, "Dm unavailable");
+                if(!msg) return fin(true, "Msg unavailable");
                 if(!sid) return fin(true, "Action Not Allowed");
-                if(!guildId) return fin(true, "Action Not Allowed");
+                if(!guildId) return fin(true, "Guild unavailable");
 
                 const user = await userModel.findOne({ 
                     sid: sid,
@@ -399,7 +399,7 @@ function run(App){
                     disabled: false
                 });
 
-                if(!user) return fin(true, "Action Not Allowed");
+                if(!user) return fin(true, "ERR::AUTH");
 
                 let canDelete = false;
                 let mid = msg.substring(4);
@@ -415,7 +415,7 @@ function run(App){
                         disabled: false,
                         users: user.id
                     });
-                    if(!guild) return fin(true, "Action Not Allowed");
+                    if(!guild) return fin(true, "Guild was not found.");
 
                     gg = guild;
 
@@ -436,7 +436,7 @@ function run(App){
                     if(guild.mods.includes(user.id)) canDelete = true;
                 }
 
-                if(!canDelete) return fin(true, "Action Not Allowed");
+                if(!canDelete) return fin(true, "You can't delete this message!");
 
                 await dmModel.findOneAndUpdate({
                     id: dmId, 
