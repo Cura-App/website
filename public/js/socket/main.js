@@ -189,7 +189,7 @@ socket.on("new-msg", (data) => {
             }
         }
 
-        let userStatus = statusCache[data.author.id].status;
+        // let userStatus = statusCache[data.author.id].status;
 
         const content = data.content;
         const thread = document.getElementById("thread");
@@ -248,7 +248,7 @@ socket.on("new-msg", (data) => {
             return `
             <div class="instance" id="msg-${data.id}">
                 <span class="company-text">
-                    <a  href="javascript:void(0)" onclick="showUserMenu('${data.author.id}', '${username}')"><!--<i class="fas fa-dot-circle ${userStatus}"></i>--> ${username}</a> ${bot_badge}
+                    <a  href="javascript:void(0)" onclick="showUserMenu('${data.author.id}', '${username}')">${username}</a> ${bot_badge}
                     <span id="usb-${data.id}">${staffBadge}</span>
                     ${delBtn}
                     <br>${content}
@@ -261,6 +261,7 @@ socket.on("new-msg", (data) => {
         thread.innerHTML = thread.innerHTML + template();
         $(`#thread`).scrollTop($(`#thread`)[0].scrollHeight)
     } catch(e){
+        console.error(e)
         if(data.author.id == uid) return;
         if(!data.guild){
             play_notification_sound()
