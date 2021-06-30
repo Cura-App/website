@@ -13,7 +13,7 @@ const formidable = require('formidable');
 const shortid = require('shortid');
 const fs = require('fs');
 const mv = require('mv');
-
+const renderUserObjects = require('../utils/renderUserObjects');
 // ? Channel view
 
 router.get("/:id", checkAuth, async (req, res) => {
@@ -30,11 +30,14 @@ router.get("/:id", checkAuth, async (req, res) => {
 
     const guilds = await guildModel.find({ users: req.user.id }); 
 
+    const userObjects = await renderUserObjects();
+
     let data = {
         pageName: dm.name,
         user: req.user,
         dm,
-        guilds: guilds.reverse()
+        guilds: guilds.reverse(),
+        users: userObjects
     }
 
     return res.render('app/channel/view.ejs', data);

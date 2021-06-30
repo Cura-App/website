@@ -45,10 +45,12 @@
                             Be the first to send a message!
                         </h3>
                     <% } %>
-                    <% dm.thread.forEach(x => { %>
+                    <% dm.thread.forEach(x => { 
+                        let userData = users[x.author.id];
+                        %>
                         <div class="instance" id="msg-<%= x.id %>">
                             <span class="company-text">
-                                <a href="javascript:void(0)" onclick="showUserMenu('<%= x.author.id %>', '<%= x.author.username %>')"><%= x.author.username %></a>
+                                <a href="javascript:void(0)" onclick="showUserMenu('<%= userData.id %>', '<%= userData.username %>')"><%= userData.username %></a>
                                 <% if(x.author.badges.bot.is){ %>
                                     <% if(x.author.badges.bot.verified){ %>
                                         <span class="badge badge-primary">
@@ -65,7 +67,7 @@
                                 <script>
                                     guild_GetStaffBadge('<%= x.member.role %>', `usb-<%= x.id %>`);
                                 </script>
-                                <% if(user.id === x.author.id){ %>
+                                <% if(user.id === userData.id){ %>
                                     <button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>
                                 <% } else if(guild.mods.includes(user.id)){ %>
                                     <button class="btn btn-danger btn-sm ml-2" onclick="deleteMessage('msg-<%= x.id %>', '<%= dm.id %>', '<%= guild.id %>')">Delete</button>

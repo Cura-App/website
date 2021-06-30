@@ -74,6 +74,8 @@ router.get("/:id", checkAuth, async(req,res)=> {
     if(!id) return err("No id provided!");
 
     const friend = await userModel.findOne({ id: id, disabled: false, terminated: false });
+    if(!friend) return err("This user is unavailable!")
+
     if(friend.id !== user.id){
         if(!friend) return err("Friend was not found!");
         if(!friend.friends.includes(user.id)) return err("You must be this user's friend to view their profile!");

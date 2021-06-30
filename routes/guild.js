@@ -15,6 +15,7 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const mv = require('mv');
 const env = process.env;
+const renderUserObjects = require('../utils/renderUserObjects');
 
 const newGuildRateLimit = rateLimit({
     windowMs: 30 * 60 * 1000,
@@ -130,12 +131,15 @@ router.get("/:id/channel/:cid", checkAuth, async (req, res) => {
 
     const guilds = await guildModel.find({ users: req.user.id }); 
 
+    const userObjects = await renderUserObjects();
+
     let data = {
         pageName: `${guild.name} / ${dm.name}`,
         user: req.user,
         dm,
         guild,
-        guilds: guilds.reverse()
+        guilds: guilds.reverse(),
+        users: userObjects
     }
 
     return res.render('app/guild/channel.ejs', data);

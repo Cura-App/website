@@ -32,10 +32,12 @@
                             Be the first to send a message!
                         </h3>
                     <% } %>
-                    <% dm.thread.forEach(x => { %>
+                    <% dm.thread.forEach(x => { 
+                        let userData = users[x.author.id];
+                    %>
                         <div class="instance" id="msg-<%= x.id %>">
                             <span class="company-text">
-                                <a href="javascript:void(0)" onclick="showUserMenu('<%= x.author.id %>', '<%= x.author.username %>')"><%= x.author.username %></a>
+                                <a href="javascript:void(0)" onclick="showUserMenu('<%= userData.id %>', '<%= userData.username %>')"><%= userData.username %></a>
                                 <% if(x.author.badges.bot.is){ %>
                                     <% if(x.author.badges.bot.verified){ %>
                                         <span class="badge badge-primary">
